@@ -138,24 +138,28 @@ def add_book_to_database(book_url, session, update):
         exit(1)
 
 
-def start_parsing(database_connection_string, update, full_scan):
-    akniga_sql.crate_database(database_connection_string)
-    session = akniga_sql.get_session(database_connection_string)
+def start_parsing(connection_string, update, full_scan):
+    akniga_sql.crate_database(connection_string)
+    session = akniga_sql.get_session(connection_string)
+    processed_urls = []
     get_url = f'{akniga_url}/index/page1/'
     while True:
         logger.info(f'get new books page: {get_url}')
         res = requests.get(get_url, headers=request_heders())
         if res.status_code == 200:
             soup_page = BeautifulSoup(res.text, 'html.parser')
-            soup_books = soup_page.findAll('div', {'class':'content__main__articles--item'})
+            soup_books = soup_page.findAll('div', {'class': 'content__main__articles--item'})
             for soup_book in soup_books:
                 book_url = soup_book.find('a')['href']
                 logger.info(f'find book url: {book_url}')
-                if not full_scan and akniga_sql.book_exists(book_url, session):
-                    logger.info(f'book already exists in database url: {book_url}')
-                    exit(0)
+                if not full_scan:
+                    if not book_url in processed_urls:
+                        if akniga_sql.book_exists(book_url, session):
+                            logger.info(f'book already exists in database url: {book_url}')
+                            exit(0)
                 add_book_to_database(book_url, session, update)
-
+                if not full_scan:
+                    processed_urls.append(book_url)
             soup_next_page = (soup_page.find('div', {'class': 'page__nav'}).
                               find('a', {'class': 'page__nav--next'}))
             if soup_next_page is None:
@@ -177,13 +181,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Парсинг сайта akniga.org и создание базы данных')
     parser.add_argument('-db', '--database', type=str, default=f'{database_connection_string}',
                         help='Строка подключения к базе данных. '
-                        f'Например: [{database_connection_string}]. '
+                        f'Например (по умолчанию): [{database_connection_string}]. '
                         'Узнать больше: https://docs.sqlalchemy.org/en/20/core/engines.html')
-    parser.add_argument('-u', '--update', type=bool, default=False,
+    parser.add_argument('-u', '--update', default=False, action='store_true',
                         help='Обновлять  найденные в базе данные.')
-    parser.add_argument('-f', '--full-scan', type=bool, default=False,
-                        help='Продолжить сканирование, даже после обнаружения следующей книги в базе данных. '
-                        'Если нужно просто добавить новые книги, то опцию лучше не активировать.')
+    parser.add_argument('-f', '--full-scan',  default=False, action='store_true',
+                        help='Продолжить сканирование, даже после обнаружения книги в базе данных. '
+                        'Если нужно просто добавить в базу новые книги, то опцию лучше не активировать.')
 
     args = parser.parse_args()
     logger.info(args)
