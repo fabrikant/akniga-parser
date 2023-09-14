@@ -15,6 +15,9 @@ class FilterType(Base):
     url = Column(String, nullable=False, unique=True)
     values = relationship('Filter', order_by='Filter.name', back_populates='type')
 
+    def __str__(self):
+        return f'name: {self.name}; id: {self.id}; url: {self.url}'
+
 
 class Filter(Base):
     __tablename__ = 'filters'
@@ -27,6 +30,9 @@ class Filter(Base):
     books = relationship('BookFilter', back_populates='filters')
     parent = relationship('Filter', remote_side=[id], back_populates='children')
     children = relationship('Filter', back_populates='parent')
+
+    def __str__(self):
+        return f'name: {self.name}; id: {self.id}; url: {self.url}'
 
 
 class BookFilter(Base):
@@ -44,6 +50,9 @@ class Author(Base):
     url = Column(String, nullable=False, unique=True)
     books = relationship('Book', order_by='Book.title', back_populates='author')
 
+    def __str__(self):
+        return f'name: {self.name}; id: {self.id}; url: {self.url}'
+
 
 class Performer(Base):
     __tablename__ = 'performers'
@@ -52,6 +61,9 @@ class Performer(Base):
     url = Column(String, nullable=False, unique=True)
     books = relationship('Book', order_by='Book.title', back_populates='performer')
 
+    def __str__(self):
+        return f'name: {self.name}; id: {self.id}; url: {self.url}'
+
 
 class Seria(Base):
     __tablename__ = 'serias'
@@ -59,6 +71,9 @@ class Seria(Base):
     name = Column(String, nullable=False)
     url = Column(String, nullable=False, unique=True)
     books = relationship('Book', order_by='Book.title', back_populates='seria')
+
+    def __str__(self):
+        return f'name: {self.name}; id: {self.id}; url: {self.url}'
 
 
 class Book(Base):
@@ -79,6 +94,9 @@ class Book(Base):
     seria = relationship("Seria", back_populates="books")
     filters = relationship("BookFilter", back_populates="books")
 
+    def __str__(self):
+        return f'title: {self.title}; id: {self.id}; url: {self.url}'
+
 
 def crate_database(connection_string):
     engine = create_engine(connection_string, echo=True)
@@ -94,25 +112,20 @@ def get_session(connection_string):
 
 def get_or_create(session, model, update, **kwargs):
     instance = session.query(model).filter_by(url=kwargs['url']).first()
-    caption =''
-    if 'name' in kwargs.keys():
-        caption = kwargs['name']
-    elif 'title' in kwargs.keys():
-        caption = kwargs['title']
 
     if instance:
-        logger.debug(f'FOUND {caption} type: {model} url: {kwargs["url"]}')
+        logger.debug(f'FOUND in the database - type: {model}; {instance}')
         if update:
             for key, value in kwargs.items():
                 setattr(instance, key, value)
             session.add(instance)
             session.commit()
-            logger.debug(f'UPDATE {caption} type: {model} url: {kwargs["url"]}')
+            logger.debug(f'UPDATE - type: {model}; {instance}')
     else:
         instance = model(**kwargs)
         session.add(instance)
         session.commit()
-        logger.debug(f'CREATED {caption} type: {model} url: {kwargs["url"]}')
+        logger.debug(f'CREATED - type: {model}; {instance}')
 
     return instance
 

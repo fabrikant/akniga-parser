@@ -43,7 +43,7 @@ def find_book_property(book_soup, pattern_string):
 
 
 def add_book_to_database(book_url, session, update):
-    logger.info(f'get: {book_url}')
+    logger.debug(f'start getting: {book_url}')
     res = requests.get(book_url, headers=request_heders())
     if res.status_code == 200:
         book_soup = BeautifulSoup(res.text, 'html.parser')
@@ -133,6 +133,7 @@ def add_book_to_database(book_url, session, update):
 
                     akniga_sql.create_book_filter_if_not_exists(session, book_id=book_db.id, filter_id=filter_db.id)
         session.commit()
+        logger.info(f'BOOK processing completed - {book_db}')
     else:
         logger.error(f'code: {res.status_code} while get: {book_url}')
         exit(1)
@@ -166,8 +167,6 @@ def start_parsing(connection_string, update, full_scan):
                 break
             else:
                 get_url = soup_next_page['href']
-
-            exit(0)
         else:
             logger.error(f'code: {res.status_code} while get: {get_url}')
             exit(1)
@@ -190,5 +189,5 @@ if __name__ == '__main__':
                         'Если нужно просто добавить в базу новые книги, то опцию лучше не активировать.')
 
     args = parser.parse_args()
-    logger.info(args)
+    logger.debug(args)
     start_parsing(args.database, args.update, args.full_scan)
