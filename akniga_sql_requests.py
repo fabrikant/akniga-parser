@@ -13,6 +13,8 @@ def get_on_base_create_requests():
                books.free AS Бесплатная,
                performers.name AS Чтец,
                serias.name AS Серия,
+               books.rating AS Рейтинг,
+               books.year AS Год,
                books.description AS Описание,
                books.url
           FROM books
@@ -36,6 +38,8 @@ def get_on_base_create_requests():
                books.free AS Бесплатная,
                performers.name AS Чтец,
                serias.name AS Серия,
+               books.rating AS Рейтинг,
+               books.year AS Год,
                filter_types.name AS [Тип Фильтра],
                filters.name AS Фильтр,
                books.description AS Описание,

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, create_engine, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Float, create_engine, ForeignKey
 from sqlalchemy.orm import Session, declarative_base, relationship
 from sqlalchemy.sql import text
 import logging
@@ -71,6 +71,8 @@ class Book(Base):
     author_id = Column(Integer, ForeignKey('authors.id'))
     performer_id = Column(Integer, ForeignKey('performers.id'), nullable=True)
     seria_id = Column(Integer, ForeignKey('serias.id'), nullable=True)
+    year = Column(Integer, nullable=True)
+    rating = Column(Float, nullable=True)
     url = Column(String, nullable=False, unique=True)
     author = relationship("Author", back_populates="books")
     performer = relationship("Performer", back_populates="books")
