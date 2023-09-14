@@ -141,8 +141,7 @@ def create_book_filter_if_not_exists(session, book_id, filter_id):
         return instance
 
 
-def book_exists(book_url, connection_string):
-    session = get_session(connection_string)
+def book_exists(book_url, session):
     if session.query(Book).filter_by(url=book_url).first():
         return True
     else:

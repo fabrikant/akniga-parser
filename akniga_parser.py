@@ -42,12 +42,11 @@ def find_book_property(book_soup, pattern_string):
     return res
 
 
-def add_book_to_database(book_url, connection_string, update):
+def add_book_to_database(book_url, session, update):
     logger.info(f'get: {book_url}')
     res = requests.get(book_url, headers=request_heders())
     if res.status_code == 200:
         book_soup = BeautifulSoup(res.text, 'html.parser')
-        session = akniga_sql.get_session(connection_string)
 
         # Книга
         title = book_soup.find('div', {'itemprop': 'name'}).get_text().strip()
@@ -141,6 +140,7 @@ def add_book_to_database(book_url, connection_string, update):
 
 def start_parsing(database_connection_string, update, full_scan):
     akniga_sql.crate_database(database_connection_string)
+    session = akniga_sql.get_session(database_connection_string)
     get_url = f'{akniga_url}/index/page1/'
     while True:
         logger.info(f'get new books page: {get_url}')
@@ -151,10 +151,10 @@ def start_parsing(database_connection_string, update, full_scan):
             for soup_book in soup_books:
                 book_url = soup_book.find('a')['href']
                 logger.info(f'find book url: {book_url}')
-                if not full_scan and akniga_sql.book_exists(book_url, database_connection_string):
+                if not full_scan and akniga_sql.book_exists(book_url, session):
                     logger.info(f'book already exists in database url: {book_url}')
                     exit(0)
-                add_book_to_database(book_url, database_connection_string, update)
+                add_book_to_database(book_url, session, update)
 
             soup_next_page = (soup_page.find('div', {'class': 'page__nav'}).
                               find('a', {'class': 'page__nav--next'}))
