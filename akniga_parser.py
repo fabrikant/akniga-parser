@@ -49,14 +49,32 @@ def add_book_to_database(book_url, session, update):
         book_soup = BeautifulSoup(res.text, 'html.parser')
 
         # Книга
-        title = book_soup.find('div', {'itemprop': 'name'}).get_text().strip()
-        description = (book_soup.find('div', {'itemprop': 'description'}).get_text().
-                       replace('Описание', '').replace('\n', '')).strip()
+        title = book_soup.find('div', {'itemprop': 'name'})
+        if title is None:
+            title = ''
+        else:
+            title = title.get_text().strip()
+
+        description = book_soup.find('div', {'itemprop': 'description'})
+        if description is None:
+            description = ''
+        else:
+            description = description.get_text().replace('Описание', '').replace('\n', '').strip()
 
         free_book = book_soup.find('a', {'href': 'https://akniga.org/paid/'}) is None
         # Продолжительность
-        hours = book_soup.find('span', {'class': 'hours'}).get_text()
-        minutes = book_soup.find('span', {'class': 'minutes'}).get_text()
+        hours = book_soup.find('span', {'class': 'hours'})
+        if hours is None:
+            hours = '0'
+        else:
+            hours = hours.get_text()
+
+        minutes = book_soup.find('span', {'class': 'minutes'})
+        if minutes is None:
+            minutes = '0'
+        else:
+            minutes = minutes.get_text()
+
         duration = convert_to_number(hours) * 60 + convert_to_number(minutes)
         book_db = akniga_sql.get_or_create(session, akniga_sql.Book, update,
                                  url=book_url,
