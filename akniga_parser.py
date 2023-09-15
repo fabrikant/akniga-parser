@@ -157,11 +157,11 @@ def add_book_to_database(book_url, session, update):
         exit(1)
 
 
-def start_parsing(connection_string, update, full_scan):
+def start_parsing(connection_string, update, full_scan, start_page):
     akniga_sql.crate_database(connection_string)
     session = akniga_sql.get_session(connection_string)
     processed_urls = []
-    get_url = f'{akniga_url}/index/page1/'
+    get_url = f'{akniga_url}/index/page{start_page}/'
     while True:
         logger.info(f'get new books page: {get_url}')
         res = requests.get(get_url, headers=request_heders())
@@ -205,7 +205,10 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--full-scan',  default=False, action='store_true',
                         help='Продолжить сканирование, даже после обнаружения книги в базе данных. '
                         'Если нужно просто добавить в базу новые книги, то опцию лучше не активировать.')
+    parser.add_argument('-s', '--start-page', type=int, default=1,
+                        help='Страница с которой начинается сканирование. По умолчанию 1. Полезно если нужно '
+                             'продолжить после сбоя. Рекомендуется использовать с параметром -f')
 
     args = parser.parse_args()
     logger.debug(args)
-    start_parsing(args.database, args.update, args.full_scan)
+    start_parsing(args.database, args.update, args.full_scan, args.start_page)
