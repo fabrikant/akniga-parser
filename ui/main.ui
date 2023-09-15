@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1034</width>
+    <width>1189</width>
     <height>760</height>
    </rect>
   </property>
@@ -14,59 +14,25 @@
    <string>akniga db viewer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QTableWidget" name="tableBooks">
-      <column>
-       <property name="text">
-        <string>title</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>author</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>duration</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>description</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>seria</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>rating</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>year</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>free</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>performer</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>url</string>
-       </property>
-      </column>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTableView" name="table_books">
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QTextEdit" name="description">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>
@@ -76,8 +42,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1034</width>
-     <height>20</height>
+     <width>1189</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menudatabase">
@@ -89,7 +55,7 @@
    <addaction name="menudatabase"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dockWidget_3">
+  <widget class="QDockWidget" name="filterDock">
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -114,7 +80,7 @@
          <item row="0" column="0">
           <widget class="QTreeView" name="filtersTree">
            <property name="sortingEnabled">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="animated">
             <bool>true</bool>
@@ -136,7 +102,7 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>tableBooks</tabstop>
+  <tabstop>table_books</tabstop>
   <tabstop>filtersTree</tabstop>
  </tabstops>
  <resources/>
@@ -160,6 +126,6 @@
  </connections>
  <slots>
   <slot>on_start_connecting()</slot>
-  <slot>filter_activated()</slot>
+  <slot>on_book_activate()</slot>
  </slots>
 </ui>
