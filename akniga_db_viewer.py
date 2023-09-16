@@ -61,6 +61,7 @@ class MainWindow(QMainWindow):
     def on_start_connecting(self):
         self.session = sql.get_session('sqlite:///akniga.db')
         self.load_constraints()
+        self.load_sections()
         self.get_data()
 
     def on_filter_check_uncheck(self, checked_item):
@@ -70,12 +71,72 @@ class MainWindow(QMainWindow):
         self.load_constraints()
         self.get_data()
 
+    def on_remove_sections(self):
+        self.load_sections()
+        self.get_data()
+
     def on_book_row_selected(self, selection1, selection2):
-        description = self.table_books.model().get_description(selection1.first().indexes()[0].row())
+        description = ''
+        first = selection1.first()
+        if not first is None:
+            description = self.table_books.model().get_description(first.indexes()[0].row())
         self.description.setDocument(QtGui.QTextDocument(description))
 
+    # Жанры (Sections)
+    def load_sections(self):
+        sections_list = self.sections_list
+        model = QStandardItemModel()
+        model.itemChanged.connect(self.on_filter_check_uncheck)
+
+        for db_section in self.session.query(sql.Section).order_by(sql.Section.name).all():
+            item = FilterItem(db_section, True)
+            model.appendRow(item)
+            # create_constraints_items(item, db_filter_type.id, None)
+
+        sections_list.setModel(model)
+
+    def set_sections(self, db_books):
+        model = self.sections_list.model()
+        set_filter = False
+        constraints = set()
+        for num in range(model.rowCount()):
+            filter_item = model.item(num)
+            if filter_item.checkState() == 2:
+                constraints.update(filter_item.db_object.books)
+                set_filter = True
+        if set_filter:
+            ids = []
+            for book_constr in constraints:
+                ids.append(book_constr.book_id)
+            db_books = db_books.filter(sql.Book.id.in_(ids))
+
+        return db_books
 
     # Характеристики
+    def load_constraints(self):
+
+        def create_constraints_items(parent_item, type_id, parent_id):
+            for db_filter in (self.session.query(sql.Filter).filter_by(types_id=type_id, parent_id=parent_id).
+                    order_by(sql.Filter.name).all()):
+                item = FilterItem(db_filter, True)
+                parent_item.appendRow(item)
+                create_constraints_items(item, type_id, db_filter.id)
+
+        constraints_tree = self.constraints_tree
+        constraints_tree.setHeaderHidden(True)
+        treeModel = QStandardItemModel()
+        treeModel.itemChanged.connect(self.on_filter_check_uncheck)
+
+        rootNode = treeModel.invisibleRootItem()
+
+        for db_filter_type in self.session.query(sql.FilterType).order_by(sql.FilterType.name).all():
+            item = FilterItem(db_filter_type, False)
+            rootNode.appendRow(item)
+            create_constraints_items(item, db_filter_type.id, None)
+
+        constraints_tree.setModel(treeModel)
+        constraints_tree.expandAll()
+
     def set_constraints(self, db_books):
 
         def iter_items(root):
@@ -105,34 +166,7 @@ class MainWindow(QMainWindow):
                     ids.append(book_constr.book_id)
                 db_books = db_books.filter(sql.Book.id.in_(ids))
 
-                db_books = db_books.filter(sql.Book.id.in_(ids))
-
         return db_books
-
-    def load_constraints(self):
-
-        def create_constraints_items(parent_item, type_id, parent_id):
-            for db_filter in (self.session.query(sql.Filter).filter_by(types_id=type_id, parent_id=parent_id).
-                    order_by(sql.Filter.name).all()):
-                item = FilterItem(db_filter, True)
-                parent_item.appendRow(item)
-                create_constraints_items(item, type_id, db_filter.id)
-
-        constraints_tree = self.constraints_tree
-        constraints_tree.setHeaderHidden(True)
-        treeModel = QStandardItemModel()
-        treeModel.itemChanged.connect(self.on_filter_check_uncheck)
-
-        rootNode = treeModel.invisibleRootItem()
-
-        for db_filter_type in self.session.query(sql.FilterType).order_by(sql.FilterType.name).all():
-            item = FilterItem(db_filter_type, False)
-            rootNode.appendRow(item)
-            create_constraints_items(item, db_filter_type.id, None)
-
-        constraints_tree.setModel(treeModel)
-        constraints_tree.expandAll()
-
 
 
     # Работа с данными
@@ -143,6 +177,7 @@ class MainWindow(QMainWindow):
                                       sql.Performer.name.label('Исполнитель'), sql.Book.free.label('Бесп.'), sql.Book)
 
         db_books = self.set_constraints(db_books)
+        db_books = self.set_sections(db_books)
 
         db_books = db_books.join(sql.Author).join(sql.Performer)
         db_books = db_books.limit(1000).offset(0)

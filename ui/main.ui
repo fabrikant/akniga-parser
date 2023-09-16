@@ -81,6 +81,23 @@
        </widget>
        <widget class="QWidget" name="tab2">
         <attribute name="title">
+         <string>Жанры</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="0">
+          <widget class="QListView" name="sections_list"/>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCommandLinkButton" name="remove_sections">
+           <property name="text">
+            <string>Удалить отбор</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab3">
+        <attribute name="title">
          <string>Характеристики</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
@@ -196,10 +213,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>remove_sections</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_remove_sections()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>594</x>
+     <y>379</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_start_connecting()</slot>
   <slot>on_book_activate()</slot>
   <slot>on_remove_constraints()</slot>
+  <slot>on_remove_sections()</slot>
  </slots>
 </ui>
