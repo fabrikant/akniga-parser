@@ -15,16 +15,17 @@ class FilterItem(QStandardItem):
         self.setEditable(False)
 
 class BooksTableModel(QAbstractTableModel):
-    def __init__(self, db_books=None):
+    def __init__(self, db_books=None, hidden_columns=1):
         QAbstractTableModel.__init__(self, None)
         self.db_books = db_books
         self.db_books_list = self.db_books.all()
+        self.visible_columns = len(self.db_books.column_descriptions) - hidden_columns
 
     def rowCount(self, parent):
         return len(self.db_books_list)
 
     def columnCount(self, parent):
-        return len(self.db_books.column_descriptions) - 1
+        return self.visible_columns
 
     def data(self, index, role):
         if not index.isValid():
@@ -54,7 +55,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi('ui/main.ui', self)
-        self.books_constraints = set()
+        # self.books_constraints = set()
 
 
 
@@ -74,12 +75,13 @@ class MainWindow(QMainWindow):
             self.create_filter_items(self.session, item, db_filter_type.id, None)
 
         treeView.setModel(treeModel)
-        # treeView.expandAll()
+        treeView.expandAll()
         self.get_data()
 
     def on_filter_check_uncheck(self, checked_item):
-        tree = self.filtersTree
-        self.books_constraints = set()
+        self.get_data()
+
+    def set_constraints(self, db_books):
 
         def iter_items(root):
             def recurse(parent):
@@ -92,43 +94,56 @@ class MainWindow(QMainWindow):
             if root is not None:
                 yield from recurse(root)
 
-        for item in iter_items(tree.model().invisibleRootItem()):
-            if item.checkState() == 2:
-                # print(item.text())
-                self.books_constraints.update(item.db_object.books)
-        self.get_data()
+        tree = self.filtersTree
+        root_item = tree.model().invisibleRootItem()
+        for type_item_num in range(root_item.rowCount()):
+            type_item = root_item.child(type_item_num, 0)
+            set_filter = False
+            constraints = set()
+            for filter_item in iter_items(type_item):
+                if filter_item.checkState() == 2:
+                    constraints.update(filter_item.db_object.books)
+                    set_filter = True
+            if set_filter:
+                ids = []
+                for book_constr in constraints:
+                    ids.append(book_constr.book_id)
+                db_books = db_books.filter(sql.Book.id.in_(ids))
+
+                db_books = db_books.filter(sql.Book.id.in_(ids))
+
+        return db_books
 
     def on_book_row_selected(self, selection1, selection2):
         description = self.table_books.model().get_description(selection1.first().indexes()[0].row())
         self.description.setDocument(QtGui.QTextDocument(description))
 
+    def set_columns_width(self, table, max_width):
+        for num_col in range(table.model().columnCount(None)):
+            width = max_width if table.columnWidth(num_col) > max_width else table.columnWidth(num_col)
+            table.setColumnWidth(num_col, width)
+
     # Работа с данными
     def get_data(self):
-        # db_books = self.session.query(sql.Book).limit(1000).offset(0)
+        self.description.setDocument(QtGui.QTextDocument(''))
         db_books = self.session.query(sql.Book.title.label('Название'), sql.Author.name.label('Автор'),
                                       sql.Book.duration.label('Продолжительность'),
                                       sql.Performer.name.label('Исполнитель'), sql.Book.free.label('Бесп.'), sql.Book)
-        if len(self.books_constraints):
-            ids = []
-            for book_constr in self.books_constraints:
-                ids.append(book_constr.book_id)
-            db_books = db_books.filter(sql.Book.id.in_(ids))
+
+        db_books = self.set_constraints(db_books)
 
         db_books = db_books.join(sql.Author).join(sql.Performer)
         db_books = db_books.limit(1000).offset(0)
 
         table = self.table_books
-
         table.setModel(BooksTableModel(db_books))
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
         selectionModel = self.table_books.selectionModel()
         selectionModel.selectionChanged.connect(self.on_book_row_selected)
 
-        # table.rowSpan(2,3)
-        # table.columnSpan(2)
-        table.setColumnWidth(0, (350 if table.columnWidth(0)%2 < 350 else (table.columnWidth(0) % 2)))
-        # print(table.columnWidth(0))
+        self.set_columns_width(table, 350)
+
 
 
     def create_filter_items(self, session, parent_item, type_id, parent_id):
