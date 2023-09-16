@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi('ui/main.ui', self)
-        # self.books_constraints = set()
+        self.session = None
 
 
     def on_start_connecting(self):
@@ -69,6 +69,13 @@ class MainWindow(QMainWindow):
 
     def on_filter_check_uncheck(self, checked_item):
         self.get_data()
+
+    def on_filter_edit(self):
+        self.get_data()
+
+    def on_filter_text_changed(self, QString):
+        if QString == '':
+            self.get_data()
 
     def on_remove_constraints(self):
         self.load_constraints()
@@ -171,9 +178,20 @@ class MainWindow(QMainWindow):
 
         return db_books
 
+    def set_filter(self, db_books, value, field):
+        val = value.strip()
+        if len(val):
+            val = '%'+val+'%'
+            db_books = db_books.filter(field.ilike(val))
+            # db_books = db_books.filter(field.ilike(f'{val}'))
+
+            # db_books = db_books.filter(field == val)
+        return db_books
 
     # Работа с данными
     def get_data(self):
+        if self.session is None:
+            return
         self.description.setDocument(QtGui.QTextDocument(''))
         db_books = self.session.query(sql.Book.title.label('Название'), sql.Author.name.label('Автор'),
                                       sql.Book.duration.label('Продолжительность'),
@@ -182,8 +200,13 @@ class MainWindow(QMainWindow):
         db_books = self.set_constraints(db_books)
         db_books = self.set_sections(db_books)
 
+        db_books = self.set_filter(db_books, self.filter_title.text(), sql.Book.title)
+        db_books = self.set_filter(db_books, self.filter_author.text(), sql.Author.name)
+        db_books = self.set_filter(db_books, self.filter_performer.text(), sql.Performer.name)
+
         db_books = db_books.join(sql.Author).join(sql.Performer)
         db_books = db_books.limit(1000).offset(0)
+
 
         table = self.table_books
         table_model = BooksTableModel(db_books)
