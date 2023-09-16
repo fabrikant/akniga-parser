@@ -1,6 +1,6 @@
 import argparse
 import logging
-import akniga_sql
+import akniga_sql as sql
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -21,6 +21,25 @@ def convert_to_number(number_string):
     except ValueError as message:
         logger.error(message)
     return res
+
+
+def books_url_iter(soup_page):
+    soup_books = soup_page.findAll('div', {'class': 'content__main__articles--item'})
+    if not soup_books is None:
+        for soup_book in soup_books:
+            book_url = soup_book.find('a')
+            if not book_url is None:
+                book_url = book_url['href']
+                logger.info(f'find book url: {book_url}')
+                yield book_url
+
+
+def get_next_page_url(soup_page):
+    soup_next_page = (soup_page.find('div', {'class': 'page__nav'}).
+                      find('a', {'class': 'page__nav--next'}))
+    if not soup_next_page is None:
+        return soup_next_page['href']
+    return None
 
 
 def convert_to_float(float_string):
@@ -76,7 +95,7 @@ def add_book_to_database(book_url, session, update):
             minutes = minutes.get_text()
 
         duration = convert_to_number(hours) * 60 + convert_to_number(minutes)
-        book_db = akniga_sql.get_or_create(session, akniga_sql.Book, update,
+        book_db = sql.get_or_create(session, sql.Book, update,
                                  url=book_url,
                                  title=title,
                                  description=description,
@@ -88,7 +107,7 @@ def add_book_to_database(book_url, session, update):
         if not author_soup is None:
             author_url = author_soup['href']
             author = author_soup.get_text().replace('\n', '')
-            book_db.author_id = akniga_sql.get_or_create(session, akniga_sql.Author, update,
+            book_db.author_id = sql.get_or_create(session, sql.Author, update,
                                                          url=author_url, name=author).id
             session.add(book_db)
 
@@ -97,7 +116,7 @@ def add_book_to_database(book_url, session, update):
         if not performer_soup is None:
             performer_url = performer_soup['href']
             performer = performer_soup.get_text().replace('\n', '')
-            book_db.performer_id = akniga_sql.get_or_create(session, akniga_sql.Performer, update,
+            book_db.performer_id = sql.get_or_create(session, sql.Performer, update,
                                                             url=performer_url, name=performer).id
             session.add(book_db)
 
@@ -107,7 +126,7 @@ def add_book_to_database(book_url, session, update):
             series_soup = series_soup.find('a')
             seria_url = series_soup['href']
             seria = series_soup.get_text().split('(')[0].replace('\n', '')
-            book_db.seria_id = akniga_sql.get_or_create(session, akniga_sql.Seria, update,
+            book_db.seria_id = sql.get_or_create(session, sql.Seria, update,
                                                         url=seria_url, name=seria).id
             session.add(book_db)
 
@@ -142,52 +161,97 @@ def add_book_to_database(book_url, session, update):
                     filter_name = link_soup.get_text()
 
                     filter_type_url = f'{filers_url_prefix}{filter_url.replace(filers_url_prefix,"").split("/")[0]}/'
-                    filter_type_db = akniga_sql.get_or_create(session, akniga_sql.FilterType, update,
+                    filter_type_db = sql.get_or_create(session, sql.FilterType, update,
                                                               url=filter_type_url, name=type_of_filters)
 
-                    filter_db = akniga_sql.get_or_create_filter(session, akniga_sql.Filter, update,
+                    filter_db = sql.get_or_create_filter(session, sql.Filter, update,
                                                                 url=filter_url, name=filter_name,
                                                                 types_id=filter_type_db.id)
 
-                    akniga_sql.create_book_filter_if_not_exists(session, book_id=book_db.id, filter_id=filter_db.id)
+                    sql.create_book_filter_if_not_exists(session, book_id=book_db.id, filter_id=filter_db.id)
         session.commit()
         logger.info(f'BOOK processing completed - {book_db}')
+        return book_db
     else:
         logger.error(f'code: {res.status_code} while get: {book_url}')
-        exit(1)
+        return None
 
 
 def start_parsing(connection_string, update, full_scan, start_page):
-    akniga_sql.crate_database(connection_string)
-    session = akniga_sql.get_session(connection_string)
+    session = sql.get_session(connection_string)
     processed_urls = []
     get_url = f'{akniga_url}/index/page{start_page}/'
-    while True:
+    while not get_url is None:
         logger.info(f'get new books page: {get_url}')
         res = requests.get(get_url, headers=request_heders())
         if res.status_code == 200:
             soup_page = BeautifulSoup(res.text, 'html.parser')
-            soup_books = soup_page.findAll('div', {'class': 'content__main__articles--item'})
-            for soup_book in soup_books:
-                book_url = soup_book.find('a')['href']
-                logger.info(f'find book url: {book_url}')
+            for book_url in books_url_iter(soup_page):
                 if not full_scan:
                     if not book_url in processed_urls:
-                        if akniga_sql.book_exists(book_url, session):
+                        if sql.book_exists(book_url, session):
                             logger.info(f'book already exists in database url: {book_url}')
-                            exit(0)
+                            return
                 add_book_to_database(book_url, session, update)
                 if not full_scan:
                     processed_urls.append(book_url)
-            soup_next_page = (soup_page.find('div', {'class': 'page__nav'}).
-                              find('a', {'class': 'page__nav--next'}))
-            if soup_next_page is None:
-                break
-            else:
-                get_url = soup_next_page['href']
+
+            get_url = get_next_page_url(soup_page)
         else:
             logger.error(f'code: {res.status_code} while get: {get_url}')
-            exit(1)
+            return
+
+
+def get_sections(session):
+    result = []
+    get_url = f'{akniga_url}/sections/'
+    logger.info(f'get sections urls: {get_url}')
+    res = requests.get(get_url, headers=request_heders())
+    if res.status_code == 200:
+        soup_page = BeautifulSoup(res.text, 'html.parser')
+        sections = soup_page.findAll('h4')
+        for section_soup in sections:
+            section_soup = section_soup.find('a')
+            if not section_soup is None:
+                section_url = section_soup['href']
+                section_name = section_soup.get_text().strip()
+                if akniga_url in section_url:
+                    section_db = sql.get_or_create(session, sql.Section, True,
+                                             url=section_url, name=section_name)
+                    result.append(section_db)
+        return result
+    else:
+        logger.error(f'code: {res.status_code} while get: {get_url}')
+        return
+
+
+def parse_section(session, update, section_db):
+    get_url = section_db.url
+    logger.info(f'get section {section_db.name} urls: {get_url}')
+    while not get_url is None:
+        logger.info(f'get new books page {section_db.name}: {get_url}')
+        res = requests.get(get_url, headers=request_heders())
+        if res.status_code == 200:
+            soup_page = BeautifulSoup(res.text, 'html.parser')
+
+            for book_url in books_url_iter(soup_page):
+                book_db = session.query(sql.Book).filter_by(url=book_url).first()
+                if not book_db:
+                    book_db = add_book_to_database(book_url, session, update)
+
+                sql.create_book_section_if_not_exists(session, book_id=book_db.id, section_id=section_db.id)
+
+            get_url = get_next_page_url(soup_page)
+        else:
+            logger.error(f'code: {res.status_code} while get: {get_url}')
+            return
+
+
+def start_parsing_sections(connection_string, update):
+    session = sql.get_session(connection_string)
+    sections_db = get_sections(session)
+    for section_db in sections_db:
+        parse_section(session, update, section_db)
 
 
 if __name__ == '__main__':
@@ -208,7 +272,12 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--start-page', type=int, default=1,
                         help='Страница с которой начинается сканирование. По умолчанию 1. Полезно если нужно '
                              'продолжить после сбоя. Рекомендуется использовать с параметром -f')
+    parser.add_argument('-g', '--genres',  default=False, action='store_true',
+                        help=f'Дополнительно просканировать книги по жанрам. Адреса: {akniga_url}/sections/')
 
     args = parser.parse_args()
     logger.debug(args)
+    sql.crate_database(args.database)
     start_parsing(args.database, args.update, args.full_scan, args.start_page)
+    if args.genres:
+        start_parsing_sections(args.database, args.update)

@@ -43,6 +43,24 @@ class BookFilter(Base):
     filters = relationship('Filter', order_by='Book.title', back_populates='books')
 
 
+class Section(Base):
+    __tablename__ = 'sections'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    url = Column(String, nullable=False, unique=True)
+    books = relationship('BookSection', back_populates='sections')
+
+    def __str__(self):
+        return f'name: {self.name}; id: {self.id}; url: {self.url}'
+
+
+class BookSection(Base):
+    __tablename__ = 'books_sections'
+    book_id = Column(Integer, ForeignKey('books.id'), primary_key=True)
+    section_id = Column(Integer, ForeignKey('sections.id'), primary_key=True)
+    books = relationship('Book', back_populates='sections')
+    sections = relationship('Section', order_by='Book.title', back_populates='books')
+
 class Author(Base):
     __tablename__ = 'authors'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -93,6 +111,7 @@ class Book(Base):
     performer = relationship("Performer", back_populates="books")
     seria = relationship("Seria", back_populates="books")
     filters = relationship("BookFilter", back_populates="books")
+    sections = relationship("BookSection", back_populates="books")
 
     def __str__(self):
         return f'title: {self.title}; id: {self.id}; url: {self.url}'
@@ -153,6 +172,16 @@ def create_book_filter_if_not_exists(session, book_id, filter_id):
         session.commit()
         return instance
 
+
+def create_book_section_if_not_exists(session, book_id, section_id):
+    instance = session.query(BookSection).filter_by(book_id=book_id,  section_id=section_id).first()
+    if instance:
+        return instance
+    else:
+        instance = BookSection(book_id=book_id,  section_id=section_id)
+        session.add(instance)
+        session.commit()
+        return instance
 
 def book_exists(book_url, session):
     if session.query(Book).filter_by(url=book_url).first():
