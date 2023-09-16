@@ -20,6 +20,7 @@ class BooksTableModel(QAbstractTableModel):
         self.db_books = db_books
         self.db_books_list = self.db_books.all()
         self.visible_columns = len(self.db_books.column_descriptions) - hidden_columns
+        self.sort(0, True)
 
     def rowCount(self, parent):
         return len(self.db_books_list)
@@ -46,9 +47,11 @@ class BooksTableModel(QAbstractTableModel):
     def get_description(self, row):
         return self.db_books_list[row][len(self.db_books.column_descriptions) - 1].description
 
-    def sort(self, Ncol, order):
-        print('sort', Ncol, order)
-
+    def sort(self, col, order):
+        def get_key(row):
+            return row[col]
+        self.db_books_list.sort(reverse=not order, key=get_key)
+        self.layoutChanged.emit()
 
 class MainWindow(QMainWindow):
 
@@ -75,11 +78,11 @@ class MainWindow(QMainWindow):
         self.load_sections()
         self.get_data()
 
-    def on_book_row_selected(self, selection1, selection2):
+    def on_book_layout_changed_selected(self, **kwargs):
         description = ''
-        first = selection1.first()
-        if not first is None:
-            description = self.table_books.model().get_description(first.indexes()[0].row())
+        sel_list = self.table_books.selectionModel().selectedIndexes()
+        if len(sel_list):
+            description = self.table_books.model().get_description(sel_list[0].row())
         self.description.setDocument(QtGui.QTextDocument(description))
 
     # Жанры (Sections)
@@ -183,11 +186,13 @@ class MainWindow(QMainWindow):
         db_books = db_books.limit(1000).offset(0)
 
         table = self.table_books
-        table.setModel(BooksTableModel(db_books))
+        table_model = BooksTableModel(db_books)
+        table.setModel(table_model)
+        table_model.layoutChanged.connect(self.on_book_layout_changed_selected)
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
         selectionModel = self.table_books.selectionModel()
-        selectionModel.selectionChanged.connect(self.on_book_row_selected)
+        selectionModel.selectionChanged.connect(self.on_book_layout_changed_selected)
 
         self.set_columns_width(table, 350)
 
