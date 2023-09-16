@@ -58,29 +58,24 @@ class MainWindow(QMainWindow):
         # self.books_constraints = set()
 
 
-
-
     def on_start_connecting(self):
         self.session = sql.get_session('sqlite:///akniga.db')
-        treeView = self.filtersTree
-        treeView.setHeaderHidden(True)
-        treeModel = QStandardItemModel()
-        treeModel.itemChanged.connect(self.on_filter_check_uncheck)
-
-        rootNode = treeModel.invisibleRootItem()
-
-        for db_filter_type in self.session.query(sql.FilterType).order_by(sql.FilterType.name).all():
-            item = FilterItem(db_filter_type, False)
-            rootNode.appendRow(item)
-            self.create_filter_items(self.session, item, db_filter_type.id, None)
-
-        treeView.setModel(treeModel)
-        treeView.expandAll()
+        self.load_constraints()
         self.get_data()
 
     def on_filter_check_uncheck(self, checked_item):
         self.get_data()
 
+    def on_remove_constraints(self):
+        self.load_constraints()
+        self.get_data()
+
+    def on_book_row_selected(self, selection1, selection2):
+        description = self.table_books.model().get_description(selection1.first().indexes()[0].row())
+        self.description.setDocument(QtGui.QTextDocument(description))
+
+
+    # Характеристики
     def set_constraints(self, db_books):
 
         def iter_items(root):
@@ -94,7 +89,7 @@ class MainWindow(QMainWindow):
             if root is not None:
                 yield from recurse(root)
 
-        tree = self.filtersTree
+        tree = self.constraints_tree
         root_item = tree.model().invisibleRootItem()
         for type_item_num in range(root_item.rowCount()):
             type_item = root_item.child(type_item_num, 0)
@@ -114,14 +109,31 @@ class MainWindow(QMainWindow):
 
         return db_books
 
-    def on_book_row_selected(self, selection1, selection2):
-        description = self.table_books.model().get_description(selection1.first().indexes()[0].row())
-        self.description.setDocument(QtGui.QTextDocument(description))
+    def load_constraints(self):
 
-    def set_columns_width(self, table, max_width):
-        for num_col in range(table.model().columnCount(None)):
-            width = max_width if table.columnWidth(num_col) > max_width else table.columnWidth(num_col)
-            table.setColumnWidth(num_col, width)
+        def create_constraints_items(parent_item, type_id, parent_id):
+            for db_filter in (self.session.query(sql.Filter).filter_by(types_id=type_id, parent_id=parent_id).
+                    order_by(sql.Filter.name).all()):
+                item = FilterItem(db_filter, True)
+                parent_item.appendRow(item)
+                create_constraints_items(item, type_id, db_filter.id)
+
+        constraints_tree = self.constraints_tree
+        constraints_tree.setHeaderHidden(True)
+        treeModel = QStandardItemModel()
+        treeModel.itemChanged.connect(self.on_filter_check_uncheck)
+
+        rootNode = treeModel.invisibleRootItem()
+
+        for db_filter_type in self.session.query(sql.FilterType).order_by(sql.FilterType.name).all():
+            item = FilterItem(db_filter_type, False)
+            rootNode.appendRow(item)
+            create_constraints_items(item, db_filter_type.id, None)
+
+        constraints_tree.setModel(treeModel)
+        constraints_tree.expandAll()
+
+
 
     # Работа с данными
     def get_data(self):
@@ -144,14 +156,13 @@ class MainWindow(QMainWindow):
 
         self.set_columns_width(table, 350)
 
+    def set_columns_width(self, table, max_width):
+        for num_col in range(table.model().columnCount(None)):
+            width = max_width if table.columnWidth(num_col) > max_width else table.columnWidth(num_col)
+            table.setColumnWidth(num_col, width)
 
 
-    def create_filter_items(self, session, parent_item, type_id, parent_id):
-        for db_filter in (session.query(sql.Filter).filter_by(types_id=type_id, parent_id=parent_id).
-                order_by(sql.Filter.name).all()):
-            item = FilterItem(db_filter, True)
-            parent_item.appendRow(item)
-            self.create_filter_items(session, item, type_id, db_filter.id)
+
 
 
 if __name__ == "__main__":

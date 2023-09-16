@@ -46,16 +46,23 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menudatabase">
+   <widget class="QMenu" name="menu_database">
     <property name="title">
-     <string>database</string>
+     <string>База данных</string>
     </property>
-    <addaction name="actionconnect"/>
+    <addaction name="connect_action"/>
    </widget>
-   <addaction name="menudatabase"/>
+   <widget class="QMenu" name="menu_tools">
+    <property name="title">
+     <string>Инструменты</string>
+    </property>
+    <addaction name="filter_doc_action"/>
+   </widget>
+   <addaction name="menu_database"/>
+   <addaction name="menu_tools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="filterDock">
+  <widget class="QDockWidget" name="filter_dock">
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -77,13 +84,20 @@
          <string>Характеристики</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QTreeView" name="filtersTree">
+         <item row="1" column="0">
+          <widget class="QTreeView" name="constraints_tree">
            <property name="sortingEnabled">
             <bool>false</bool>
            </property>
            <property name="animated">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCommandLinkButton" name="remove_constraints">
+           <property name="text">
+            <string>Удалить отбор</string>
            </property>
           </widget>
          </item>
@@ -94,21 +108,32 @@
     </layout>
    </widget>
   </widget>
-  <action name="actionconnect">
+  <action name="connect_action">
    <property name="text">
-    <string>connect</string>
+    <string>Подключиться</string>
+   </property>
+  </action>
+  <action name="filter_doc_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Панель фильтров</string>
    </property>
   </action>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>table_books</tabstop>
-  <tabstop>filtersTree</tabstop>
+  <tabstop>constraints_tree</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>actionconnect</sender>
+   <sender>connect_action</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>on_start_connecting()</slot>
@@ -123,9 +148,58 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>remove_constraints</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_remove_constraints()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>147</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>594</x>
+     <y>379</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filter_doc_action</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>filter_dock</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>147</x>
+     <y>379</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filter_dock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>filter_doc_action</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>147</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_start_connecting()</slot>
   <slot>on_book_activate()</slot>
+  <slot>on_remove_constraints()</slot>
  </slots>
 </ui>
