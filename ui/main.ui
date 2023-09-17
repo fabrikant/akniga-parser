@@ -6,23 +6,132 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1189</width>
-    <height>760</height>
+    <width>1252</width>
+    <height>844</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>akniga db viewer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_5">
     <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="5">
+       <widget class="QLabel" name="page_count">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="8">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Страница</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="7">
+       <widget class="QLabel" name="record_count">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="page_prev">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>img/page_prev.png</normaloff>img/page_prev.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QLineEdit" name="page_current">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="inputMask">
+         <string/>
+        </property>
+        <property name="maxLength">
+         <number>32767</number>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="page_reload">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>img/reload.png</normaloff>img/reload.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QPushButton" name="page_next">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>img/page_next.png</normaloff>img/page_next.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
      <widget class="QTableView" name="table_books">
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="QTextEdit" name="description">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -42,7 +151,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1189</width>
+     <width>1252</width>
      <height>22</height>
     </rect>
    </property>
@@ -78,19 +187,6 @@
          <string>Фильтры</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="9" column="1">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="filter_title">
            <property name="clearButtonEnabled">
@@ -98,17 +194,17 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Автор:</string>
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="filter_performer">
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
-          <widget class="QCheckBox" name="filter_free">
-           <property name="text">
-            <string>Бесплатные</string>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="filter_author">
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -128,19 +224,27 @@
          <item row="5" column="1">
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Исполнитель</string>
+            <string>Исполнитель:</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="filter_author">
-           <property name="clearButtonEnabled">
-            <bool>false</bool>
+         <item row="4" column="2">
+          <widget class="QPushButton" name="filter_author_clear">
+           <property name="icon">
+            <iconset>
+             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
-          <widget class="QLineEdit" name="filter_performer">
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Автор:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLineEdit" name="filter_seria">
            <property name="clearButtonEnabled">
             <bool>false</bool>
            </property>
@@ -154,16 +258,43 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="2">
-          <widget class="QPushButton" name="filter_author_clear">
+         <item row="6" column="2">
+          <widget class="QPushButton" name="filter_performer_clear">
            <property name="icon">
             <iconset>
              <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
            </property>
           </widget>
          </item>
-         <item row="6" column="2">
-          <widget class="QPushButton" name="filter_performer_clear">
+         <item row="7" column="1">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Серия:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QCheckBox" name="filter_free">
+           <property name="text">
+            <string>Бесплатные</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="8" column="2">
+          <widget class="QPushButton" name="filter_seria_clear">
            <property name="icon">
             <iconset>
              <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
@@ -434,6 +565,102 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>page_current</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_page_set()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>523</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>625</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>page_prev</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_page_prev()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>359</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>625</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>page_next</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_page_next()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>620</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>625</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>page_reload</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_page_reload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>625</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filter_seria</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_filter_edit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>625</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filter_seria_clear</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_filter_seria_clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>625</x>
+     <y>421</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_start_connecting()</slot>
@@ -445,5 +672,10 @@
   <slot>on_filter_title_clear()</slot>
   <slot>on_filter_author_clear()</slot>
   <slot>on_filter_performer_clear()</slot>
+  <slot>on_page_next()</slot>
+  <slot>on_page_prev()</slot>
+  <slot>on_page_reload()</slot>
+  <slot>on_page_set()</slot>
+  <slot>on_filter_seria_clear()</slot>
  </slots>
 </ui>

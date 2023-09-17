@@ -18,6 +18,7 @@ class FilterItem(QStandardItem):
         self.setEditable(False)
 
 class BooksTableModel(QAbstractTableModel):
+
     def __init__(self, db_books=None, hidden_columns=1):
         QAbstractTableModel.__init__(self, None)
         self.db_books = db_books
@@ -25,8 +26,19 @@ class BooksTableModel(QAbstractTableModel):
         self.visible_columns = len(self.db_books.column_descriptions) - hidden_columns
         self.sort(0, True)
 
+        self.records_on_page = 1000
+        self.records_count = len(self.db_books_list)
+        self.pages_count = self.records_count // self.records_on_page + 1 \
+            if self.records_count % self.records_on_page else 0
+        self.page_number = 1 if self.records_count else 0
+
+
     def rowCount(self, parent):
-        return len(self.db_books_list)
+        if self.page_number < self.pages_count:
+            return self.records_on_page
+        else:
+            return self.records_count % self.records_on_page
+        # return len(self.db_books_list)
 
     def columnCount(self, parent):
         return self.visible_columns
@@ -37,13 +49,14 @@ class BooksTableModel(QAbstractTableModel):
         elif role != Qt.DisplayRole:
             return QVariant()
         else:
-            return self.db_books_list[index.row()][index.column()]
+            return self.db_books_list[(self.page_number - 1) * self.records_on_page + index.row()][index.column()]
+            # return self.db_books_list[index.row()][index.column()]
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self.db_books.column_descriptions[col]['name']
         elif orientation == Qt.Vertical and role == Qt.DisplayRole:
-            return col
+            return (self.page_number - 1) * self.records_on_page + col + 1
         else:
             return QVariant()
 
@@ -55,6 +68,22 @@ class BooksTableModel(QAbstractTableModel):
             return row[col]
         self.db_books_list.sort(reverse=not order, key=get_key)
         self.layoutChanged.emit()
+
+    def next_page(self):
+        if self.page_number < self.pages_count:
+            self.page_number += 1
+            self.layoutChanged.emit()
+
+    def prev_page(self):
+        if self.page_number > 1:
+            self.page_number -= 1
+            self.layoutChanged.emit()
+
+    def set_page(self, new_page_number):
+        if not new_page_number == self.page_number and 0 < new_page_number <= self.pages_count:
+            self.page_number = new_page_number
+            self.layoutChanged.emit()
+
 
 class MainWindow(QMainWindow):
 
@@ -82,6 +111,9 @@ class MainWindow(QMainWindow):
     def on_filter_performer_clear(self):
         self.clear_text_filter(self.filter_performer)
 
+    def on_filter_seria_clear(self):
+        self.clear_text_filter(self.filter_seria)
+
     def clear_text_filter(self, text_field):
         if not text_field.text() == '':
             text_field.setText('')
@@ -108,6 +140,24 @@ class MainWindow(QMainWindow):
         if len(sel_list):
             description = self.table_books.model().get_description(sel_list[0].row())
         self.description.setDocument(QtGui.QTextDocument(description))
+
+    def on_page_next(self):
+        model = self.table_books.model()
+        model.next_page()
+        self.page_current.setText(f'{model.page_number}')
+
+    def on_page_prev(self):
+        model = self.table_books.model()
+        model.prev_page()
+        self.page_current.setText(f'{model.page_number}')
+
+    def on_page_reload(self):
+        self.get_data()
+
+    def on_page_set(self):
+        model = self.table_books.model()
+        model.set_page(int(f'0{self.page_current.text()}'))
+        self.page_current.setText(f'{model.page_number}')
 
     # Жанры (Sections)
     def load_sections(self):
@@ -207,7 +257,7 @@ class MainWindow(QMainWindow):
             return
         self.description.setDocument(QtGui.QTextDocument(''))
         db_books = self.session.query(sql.Book.title.label('Название'), sql.Author.name.label('Автор'),
-                                      sql.Book.duration.label('Продолжительность'),
+                                      sql.Seria.name.label('Серия'), sql.Book.duration.label('Продолжительность'),
                                       sql.Performer.name.label('Исполнитель'), sql.Book.free.label('Бесп.'), sql.Book)
 
         db_books = self.set_constraints(db_books)
@@ -216,11 +266,12 @@ class MainWindow(QMainWindow):
         db_books = self.set_filter(db_books, self.filter_title.text(), sql.Book.title)
         db_books = self.set_filter(db_books, self.filter_author.text(), sql.Author.name)
         db_books = self.set_filter(db_books, self.filter_performer.text(), sql.Performer.name)
+        db_books = self.set_filter(db_books, self.filter_seria.text(), sql.Seria.name)
+
         if self.filter_free.isChecked():
             db_books = db_books.filter(sql.Book.free)
 
-        db_books = db_books.join(sql.Author).join(sql.Performer)
-        db_books = db_books.limit(1000).offset(0)
+        db_books = db_books.outerjoin(sql.Author).outerjoin(sql.Performer).outerjoin(sql.Seria)
 
 
         table = self.table_books
@@ -231,8 +282,11 @@ class MainWindow(QMainWindow):
         table.resizeRowsToContents()
         selectionModel = self.table_books.selectionModel()
         selectionModel.selectionChanged.connect(self.on_book_layout_changed_selected)
-
+        # Интерфейсные вещи
         self.set_columns_width(table, 350)
+        self.page_count.setText(f'из {table_model.pages_count}')
+        self.record_count.setText(f'Всего записей: {table_model.records_count}')
+        self.page_current.setText(f'{table_model.page_number}')
 
     def set_columns_width(self, table, max_width):
         for num_col in range(table.model().columnCount(None)):
