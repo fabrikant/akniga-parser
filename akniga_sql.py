@@ -100,6 +100,8 @@ class Book(Base):
     title = Column(String)
     description = Column(String)
     duration = Column(Integer)
+    duration_hours = Column(Integer)
+    duration_minutes = Column(Integer)
     free = Column(Boolean)
     author_id = Column(Integer, ForeignKey('authors.id'))
     performer_id = Column(Integer, ForeignKey('performers.id'), nullable=True)
