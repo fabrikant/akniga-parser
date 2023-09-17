@@ -84,23 +84,25 @@ def add_book_to_database(book_url, session, update):
         # Продолжительность
         hours = book_soup.find('span', {'class': 'hours'})
         if hours is None:
-            hours = '0'
+            hours = 0
         else:
-            hours = hours.get_text()
+            hours = convert_to_number(hours.get_text())
 
         minutes = book_soup.find('span', {'class': 'minutes'})
         if minutes is None:
-            minutes = '0'
+            minutes = 0
         else:
-            minutes = minutes.get_text()
+            minutes = convert_to_number(minutes.get_text())
 
-        duration = convert_to_number(hours) * 60 + convert_to_number(minutes)
+        duration = hours * 60 + minutes
         book_db = sql.get_or_create(session, sql.Book, update,
-                                 url=book_url,
-                                 title=title,
-                                 description=description,
-                                 duration=duration,
-                                 free=free_book)
+                                    url=book_url,
+                                    title=title,
+                                    description=description,
+                                    duration=duration,
+                                    duration_hours=hours,
+                                    duration_minutes=minutes,
+                                    free=free_book)
 
         # Автор
         author_soup = book_soup.find('a', {'rel': 'author'})

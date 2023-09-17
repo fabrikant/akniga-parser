@@ -20,26 +20,36 @@ class FilterItem(QStandardItem):
 
 class BooksTableModel(QAbstractTableModel):
 
-    def __init__(self, db_books=None, hidden_columns=1):
+    def __init__(self, db_books=None, hidden_columns=1, duration_column_name='Продолжительность'):
         QAbstractTableModel.__init__(self, None)
         self.db_books = db_books
         self.db_books_list = self.db_books.all()
         self.visible_columns = len(self.db_books.column_descriptions) - hidden_columns
         self.sort(0, True)
 
+        # pagination
         self.records_on_page = 1000
         self.records_count = len(self.db_books_list)
         self.pages_count = self.records_count // self.records_on_page + 1 \
             if self.records_count % self.records_on_page else 0
         self.page_number = 1 if self.records_count else 0
 
+        # duration
+        self.duration_column_name = duration_column_name
+        self.col_hours = None
+        self.col_minutess = None
+        for col_ind in range(len(self.db_books.column_descriptions)):
+            col_desc = self.db_books.column_descriptions[col_ind]
+            if col_desc['name'] == 'duration_hours':
+                self.col_hours = col_ind
+            elif col_desc['name'] == 'duration_minutes':
+                self.col_minutess = col_ind
 
     def rowCount(self, parent):
         if self.page_number < self.pages_count:
             return self.records_on_page
         else:
             return self.records_count % self.records_on_page
-        # return len(self.db_books_list)
 
     def columnCount(self, parent):
         return self.visible_columns
@@ -50,8 +60,15 @@ class BooksTableModel(QAbstractTableModel):
         elif role != Qt.DisplayRole:
             return QVariant()
         else:
-            return self.db_books_list[(self.page_number - 1) * self.records_on_page + index.row()][index.column()]
-            # return self.db_books_list[index.row()][index.column()]
+            cur_row = (self.page_number - 1) * self.records_on_page + index.row()
+            cur_data = self.db_books_list[cur_row][index.column()]
+            if self.db_books.column_descriptions[index.column()]['name'] == self.duration_column_name:
+                if not self.col_hours is None and not self.col_minutess is None:
+                    hours = self.db_books_list[cur_row][self.col_hours]
+                    minutes = self.db_books_list[cur_row][self.col_minutess]
+                    cur_data = (f'{hours} ч. ' if hours else '') + (f'{minutes} мин.' if minutes else '')
+            return cur_data
+
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -259,7 +276,8 @@ class MainWindow(QMainWindow):
         self.description.setDocument(QtGui.QTextDocument(''))
         db_books = self.session.query(sql.Book.title.label('Название'), sql.Author.name.label('Автор'),
                                       sql.Seria.name.label('Серия'), sql.Book.duration.label('Продолжительность'),
-                                      sql.Performer.name.label('Исполнитель'), sql.Book.free.label('Бесп.'), sql.Book)
+                                      sql.Performer.name.label('Исполнитель'), sql.Book.free.label('Бесп.'),
+                                      sql.Book.duration_hours, sql.Book.duration_minutes, sql.Book)
 
         db_books = self.set_constraints(db_books)
         db_books = self.set_sections(db_books)
@@ -269,6 +287,14 @@ class MainWindow(QMainWindow):
         db_books = self.set_filter(db_books, self.filter_performer.text(), sql.Performer.name)
         db_books = self.set_filter(db_books, self.filter_seria.text(), sql.Seria.name)
 
+        time = self.time_min.time().hour() * 60 + self.time_min.time().minute()
+        if time:
+            db_books = db_books.filter(sql.Book.duration >= time)
+
+        time = self.time_max.time().hour() * 60 + self.time_max.time().minute()
+        if time:
+            db_books = db_books.filter(sql.Book.duration <= time)
+
         if self.filter_free.isChecked():
             db_books = db_books.filter(sql.Book.free)
 
@@ -276,7 +302,7 @@ class MainWindow(QMainWindow):
 
 
         table = self.table_books
-        table_model = BooksTableModel(db_books)
+        table_model = BooksTableModel(db_books, 3)
         table.setModel(table_model)
         table_model.layoutChanged.connect(self.on_book_layout_changed_selected)
         table.resizeColumnsToContents()
