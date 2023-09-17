@@ -71,21 +71,14 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab1">
         <attribute name="title">
          <string>Фильтры</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="3" column="1">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Автор:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
+         <item row="9" column="1">
           <spacer name="verticalSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -101,7 +94,21 @@
          <item row="2" column="1">
           <widget class="QLineEdit" name="filter_title">
            <property name="clearButtonEnabled">
-            <bool>true</bool>
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Автор:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QCheckBox" name="filter_free">
+           <property name="text">
+            <string>Бесплатные</string>
            </property>
           </widget>
          </item>
@@ -118,13 +125,6 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="filter_author">
-           <property name="clearButtonEnabled">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="5" column="1">
           <widget class="QLabel" name="label_3">
            <property name="text">
@@ -132,10 +132,41 @@
            </property>
           </widget>
          </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="filter_author">
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
          <item row="6" column="1">
           <widget class="QLineEdit" name="filter_performer">
            <property name="clearButtonEnabled">
-            <bool>true</bool>
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QPushButton" name="filter_title_clear">
+           <property name="icon">
+            <iconset>
+             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QPushButton" name="filter_author_clear">
+           <property name="icon">
+            <iconset>
+             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="2">
+          <widget class="QPushButton" name="filter_performer_clear">
+           <property name="icon">
+            <iconset>
+             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
            </property>
           </widget>
          </item>
@@ -340,14 +371,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>filter_title</sender>
-   <signal>textChanged(QString)</signal>
+   <sender>filter_free</sender>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_filter_text_changed()</slot>
+   <slot>on_filter_edit()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>173</x>
-     <y>123</y>
+     <x>147</x>
+     <y>261</y>
     </hint>
     <hint type="destinationlabel">
      <x>594</x>
@@ -356,14 +387,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>filter_performer</sender>
-   <signal>textChanged(QString)</signal>
+   <sender>filter_title_clear</sender>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_filter_text_changed()</slot>
+   <slot>on_filter_title_clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>173</x>
-     <y>231</y>
+     <x>261</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>594</x>
@@ -372,14 +403,30 @@
    </hints>
   </connection>
   <connection>
-   <sender>filter_author</sender>
-   <signal>textChanged(QString)</signal>
+   <sender>filter_author_clear</sender>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_filter_text_changed()</slot>
+   <slot>on_filter_author_clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>173</x>
-     <y>177</y>
+     <x>261</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>594</x>
+     <y>379</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filter_performer_clear</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_filter_performer_clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>230</y>
     </hint>
     <hint type="destinationlabel">
      <x>594</x>
@@ -395,5 +442,8 @@
   <slot>on_remove_sections()</slot>
   <slot>on_filter_edit()</slot>
   <slot>on_filter_text_changed()</slot>
+  <slot>on_filter_title_clear()</slot>
+  <slot>on_filter_author_clear()</slot>
+  <slot>on_filter_performer_clear()</slot>
  </slots>
 </ui>

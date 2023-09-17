@@ -4,6 +4,9 @@ from PyQt5 import uic, QtCore, QtGui
 from PyQt5.Qt import QStandardItemModel, QAbstractTableModel, QStandardItem
 from PyQt5.QtCore import Qt, QVariant
 import akniga_sql as sql
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class FilterItem(QStandardItem):
@@ -70,6 +73,20 @@ class MainWindow(QMainWindow):
     def on_filter_check_uncheck(self, checked_item):
         self.get_data()
 
+    def on_filter_title_clear(self):
+       self.clear_text_filter(self.filter_title)
+
+    def on_filter_author_clear(self):
+        self.clear_text_filter(self.filter_author)
+
+    def on_filter_performer_clear(self):
+        self.clear_text_filter(self.filter_performer)
+
+    def clear_text_filter(self, text_field):
+        if not text_field.text() == '':
+            text_field.setText('')
+            self.get_data()
+
     def on_filter_edit(self):
         self.get_data()
 
@@ -101,7 +118,6 @@ class MainWindow(QMainWindow):
         for db_section in self.session.query(sql.Section).order_by(sql.Section.name).all():
             item = FilterItem(db_section, True)
             model.appendRow(item)
-            # create_constraints_items(item, db_filter_type.id, None)
 
         sections_list.setModel(model)
 
@@ -178,17 +194,14 @@ class MainWindow(QMainWindow):
 
         return db_books
 
+    # Работа с данными
     def set_filter(self, db_books, value, field):
         val = value.strip()
         if len(val):
             val = '%'+val+'%'
             db_books = db_books.filter(field.ilike(val))
-            # db_books = db_books.filter(field.ilike(f'{val}'))
-
-            # db_books = db_books.filter(field == val)
         return db_books
 
-    # Работа с данными
     def get_data(self):
         if self.session is None:
             return
@@ -203,6 +216,8 @@ class MainWindow(QMainWindow):
         db_books = self.set_filter(db_books, self.filter_title.text(), sql.Book.title)
         db_books = self.set_filter(db_books, self.filter_author.text(), sql.Author.name)
         db_books = self.set_filter(db_books, self.filter_performer.text(), sql.Performer.name)
+        if self.filter_free.isChecked():
+            db_books = db_books.filter(sql.Book.free)
 
         db_books = db_books.join(sql.Author).join(sql.Performer)
         db_books = db_books.limit(1000).offset(0)
@@ -229,6 +244,10 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    )
+
     app = QApplication(sys.argv)
     mainWindow = MainWindow()
     mainWindow.show()
