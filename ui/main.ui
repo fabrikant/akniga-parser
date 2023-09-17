@@ -215,12 +215,6 @@
           <layout class="QGridLayout" name="gridLayout_6">
            <item row="0" column="0" colspan="2">
             <widget class="QFrame" name="frame">
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
                <widget class="QLabel" name="label_7">
@@ -250,6 +244,19 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="14" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item row="5" column="0">
           <widget class="QLabel" name="label_3">
@@ -324,23 +331,18 @@
            </property>
           </widget>
          </item>
-         <item row="14" column="0">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="13" column="0" colspan="2">
           <widget class="QCheckBox" name="filter_free">
            <property name="text">
             <string>Бесплатные</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QPushButton" name="filter_time_clear">
+           <property name="icon">
+            <iconset>
+             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
            </property>
           </widget>
          </item>
@@ -736,6 +738,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>filter_time_clear</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_filter_time_clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>392</x>
+     <y>326</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_start_connecting()</slot>
@@ -752,5 +770,6 @@
   <slot>on_page_reload()</slot>
   <slot>on_page_set()</slot>
   <slot>on_filter_seria_clear()</slot>
+  <slot>on_filter_time_clear()</slot>
  </slots>
 </ui>

@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.Qt import QStandardItemModel, QAbstractTableModel, QStandardItem
-from PyQt5.QtCore import Qt, QVariant
+from PyQt5.QtCore import Qt, QVariant, QTime
 from PyQt5.QtGui import QIntValidator
 import akniga_sql as sql
 import logging
@@ -20,7 +20,7 @@ class FilterItem(QStandardItem):
 
 class BooksTableModel(QAbstractTableModel):
 
-    def __init__(self, db_books=None, hidden_columns=1, duration_column_name='Продолжительность'):
+    def __init__(self, db_books=None, hidden_columns=1):
         QAbstractTableModel.__init__(self, None)
         self.db_books = db_books
         self.db_books_list = self.db_books.all()
@@ -33,17 +33,6 @@ class BooksTableModel(QAbstractTableModel):
         self.pages_count = self.records_count // self.records_on_page + 1 \
             if self.records_count % self.records_on_page else 0
         self.page_number = 1 if self.records_count else 0
-
-        # duration
-        self.duration_column_name = duration_column_name
-        self.col_hours = None
-        self.col_minutess = None
-        for col_ind in range(len(self.db_books.column_descriptions)):
-            col_desc = self.db_books.column_descriptions[col_ind]
-            if col_desc['name'] == 'duration_hours':
-                self.col_hours = col_ind
-            elif col_desc['name'] == 'duration_minutes':
-                self.col_minutess = col_ind
 
     def rowCount(self, parent):
         if self.page_number < self.pages_count:
@@ -61,14 +50,7 @@ class BooksTableModel(QAbstractTableModel):
             return QVariant()
         else:
             cur_row = (self.page_number - 1) * self.records_on_page + index.row()
-            cur_data = self.db_books_list[cur_row][index.column()]
-            if self.db_books.column_descriptions[index.column()]['name'] == self.duration_column_name:
-                if not self.col_hours is None and not self.col_minutess is None:
-                    hours = self.db_books_list[cur_row][self.col_hours]
-                    minutes = self.db_books_list[cur_row][self.col_minutess]
-                    cur_data = (f'{hours} ч. ' if hours else '') + (f'{minutes} мин.' if minutes else '')
-            return cur_data
-
+            return self.db_books_list[cur_row][index.column()]
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -118,6 +100,11 @@ class MainWindow(QMainWindow):
         self.get_data()
 
     def on_filter_check_uncheck(self, checked_item):
+        self.get_data()
+
+    def on_filter_time_clear(self):
+        self.time_min.setTime(QTime(0, 0))
+        self.time_max.setTime(QTime(0, 0))
         self.get_data()
 
     def on_filter_title_clear(self):
@@ -275,9 +262,9 @@ class MainWindow(QMainWindow):
             return
         self.description.setDocument(QtGui.QTextDocument(''))
         db_books = self.session.query(sql.Book.title.label('Название'), sql.Author.name.label('Автор'),
-                                      sql.Seria.name.label('Серия'), sql.Book.duration.label('Продолжительность'),
-                                      sql.Performer.name.label('Исполнитель'), sql.Book.free.label('Бесп.'),
-                                      sql.Book.duration_hours, sql.Book.duration_minutes, sql.Book)
+                                      sql.Seria.name.label('Серия'), sql.Book.duration_hours.label('час.'),
+                                      sql.Book.duration_minutes.label('мин.'), sql.Performer.name.label('Исполнитель'),
+                                      sql.Book.free.label('Беспл.'), sql.Book)
 
         db_books = self.set_constraints(db_books)
         db_books = self.set_sections(db_books)
@@ -302,7 +289,7 @@ class MainWindow(QMainWindow):
 
 
         table = self.table_books
-        table_model = BooksTableModel(db_books, 3)
+        table_model = BooksTableModel(db_books)
         table.setModel(table_model)
         table_model.layoutChanged.connect(self.on_book_layout_changed_selected)
         table.resizeColumnsToContents()
