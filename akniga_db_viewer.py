@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.Qt import QStandardItemModel, QAbstractTableModel, QStandardItem
 from PyQt5.QtCore import Qt, QVariant
+from PyQt5.QtGui import QIntValidator
 import akniga_sql as sql
 import logging
 
@@ -282,11 +283,13 @@ class MainWindow(QMainWindow):
         table.resizeRowsToContents()
         selectionModel = self.table_books.selectionModel()
         selectionModel.selectionChanged.connect(self.on_book_layout_changed_selected)
+
         # Интерфейсные вещи
         self.set_columns_width(table, 350)
         self.page_count.setText(f'из {table_model.pages_count}')
         self.record_count.setText(f'Всего записей: {table_model.records_count}')
         self.page_current.setText(f'{table_model.page_number}')
+        self.page_current.setValidator(QIntValidator(1, table_model.pages_count))
 
     def set_columns_width(self, table, max_width):
         for num_col in range(table.model().columnCount(None)):
