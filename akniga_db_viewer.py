@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
-from PyQt5 import uic, QtCore, QtGui
+from PyQt5 import uic, QtGui
+from PyQt5.QtCore import QSettings
 from PyQt5.Qt import QStandardItemModel, QStandardItem
 from PyQt5.QtGui import QIntValidator
 from table_model import BooksTableModel
@@ -23,14 +24,35 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi('ui/main.ui', self)
+        self.config_file_name = 'settings.ini'
+        self.read_settings()
         self.session = None
         self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
+        self.open_database()
 
-    def on_start_connecting(self):
-        self.session = sql.get_session('sqlite:///akniga.db')
-        self.load_constraints()
-        self.load_sections()
-        self.get_data()
+    def read_settings(self):
+        settings = QSettings(self.config_file_name, QSettings.IniFormat)
+        self.connection_string = settings.value('connection_string', 'sqlite:///akniga.sqlite')
+
+    def write_settings(self):
+        settings = QSettings(self.config_file_name, QSettings.IniFormat)
+        settings.setValue('connection_string', self.connection_string)
+
+
+    def open_database(self):
+        if self.connection_string:
+            self.session = sql.get_session(self.connection_string)
+            self.load_constraints()
+            self.load_sections()
+            self.get_data()
+
+    def on_start_open_base(self):
+        file_name, _ = QFileDialog.getOpenFileName(self, 'Открыть файл',
+                                                   filter='Базы sqlite (*.sqlite);;Все файлы (*.*)')
+        if file_name:
+            self.connection_string = f'sqlite:///{file_name}'
+            self.write_settings()
+            self.open_database()
 
     def on_filter_check_uncheck(self, checked_item):
         self.get_data()

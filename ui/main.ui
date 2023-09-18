@@ -162,7 +162,7 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="db_connect_action"/>
+    <addaction name="db_open_action"/>
     <addaction name="separator"/>
     <addaction name="exit_action"/>
    </widget>
@@ -402,13 +402,13 @@
     </layout>
    </widget>
   </widget>
-  <action name="db_connect_action">
+  <action name="db_open_action">
    <property name="icon">
     <iconset>
      <normaloff>img/database.png</normaloff>img/database.png</iconset>
    </property>
    <property name="text">
-    <string>Подключиться к базе</string>
+    <string>Открыть базу</string>
    </property>
   </action>
   <action name="filter_doc_action">
@@ -454,10 +454,10 @@
  <resources/>
  <connections>
   <connection>
-   <sender>db_connect_action</sender>
+   <sender>db_open_action</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_start_connecting()</slot>
+   <slot>on_start_open_base()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -807,7 +807,7 @@
   </connection>
  </connections>
  <slots>
-  <slot>on_start_connecting()</slot>
+  <slot>on_start_open_base()</slot>
   <slot>on_book_activate()</slot>
   <slot>on_remove_constraints()</slot>
   <slot>on_remove_sections()</slot>

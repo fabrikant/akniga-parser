@@ -257,7 +257,7 @@ def start_parsing_sections(connection_string, update):
 
 
 if __name__ == '__main__':
-    database_connection_string = 'sqlite:///akniga.db'
+    database_connection_string = 'sqlite:///akniga.sqlite'
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
     )
