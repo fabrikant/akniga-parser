@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSettings, QProcess
 from PyQt5.Qt import QStandardItemModel, QStandardItem
 from PyQt5.QtGui import QIntValidator
 from table_model import BooksTableModel
@@ -29,6 +29,8 @@ class MainWindow(QMainWindow):
         self.session = None
         self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
         self.open_database()
+        self.update_process = None
+        self.console_dock.hide()
 
     def read_settings(self):
         settings = QSettings(self.config_file_name, QSettings.IniFormat)
@@ -53,6 +55,35 @@ class MainWindow(QMainWindow):
             self.connection_string = f'sqlite:///{file_name}'
             self.write_settings()
             self.open_database()
+
+    def on_db_update(self):
+        def print_message(data):
+            stdout = bytes(data).decode("utf8")
+            stdout = stdout.replace("\r\r", "\r")
+            if not "" == stdout:
+                self.console_text.append(stdout)
+        def on_stdout():
+            print_message(self.update_process.readAllStandardOutput())
+        def on_stderr():
+            print_message(self.update_process.readAllStandardError())
+        def on_finished():
+            self.update_process = None
+
+        if self.connection_string:
+            self.console_dock.show()
+            self.update_process = QProcess()
+            self.update_process.readyReadStandardOutput.connect(on_stdout)
+            self.update_process.readyReadStandardError.connect(on_stderr)
+            self.update_process.finished.connect(on_finished)
+            try:
+                command = ['akniga_parser.py', '-db', self.connection_string, '-g']
+                self.update_process.start("python", command)
+            except Exception as error:
+                self.console_text.append(f"{error}")
+
+    def on_close_console(self, visible):
+        if not visible and not self.update_process is None:
+            self.update_process.kill()
 
     def on_filter_check_uncheck(self, checked_item):
         self.get_data()

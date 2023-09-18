@@ -15,26 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
-    <item row="1" column="0">
-     <widget class="QTableView" name="table_books">
-      <property name="sortingEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QTextEdit" name="description">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="5">
@@ -147,6 +127,26 @@
       </item>
      </layout>
     </item>
+    <item row="2" column="0">
+     <widget class="QTextEdit" name="description">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QTableView" name="table_books">
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -171,6 +171,7 @@
      <string>Инструменты</string>
     </property>
     <addaction name="filter_doc_action"/>
+    <addaction name="db_update_action"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_tools"/>
@@ -402,6 +403,26 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="console_dock">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout_8">
+     <item row="0" column="0">
+      <widget class="QTextBrowser" name="console_text">
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 0, 0);
+color: rgb(255, 255, 255);</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="db_open_action">
    <property name="icon">
     <iconset>
@@ -433,6 +454,15 @@
    </property>
    <property name="text">
     <string>Выход</string>
+   </property>
+  </action>
+  <action name="db_update_action">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/get_update.png</normaloff>img/get_update.png</iconset>
+   </property>
+   <property name="text">
+    <string>Обновить базу</string>
    </property>
   </action>
  </widget>
@@ -805,6 +835,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>db_update_action</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_db_update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>console_dock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_close_console()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>550</x>
+     <y>655</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_start_open_base()</slot>
@@ -823,5 +885,7 @@
   <slot>on_filter_seria_clear()</slot>
   <slot>on_filter_time_slider_changed()</slot>
   <slot>on_table_book_dbl_click()</slot>
+  <slot>on_db_update()</slot>
+  <slot>on_close_console()</slot>
  </slots>
 </ui>
