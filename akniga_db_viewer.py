@@ -66,7 +66,10 @@ class BooksTableModel(QAbstractTableModel):
 
     def sort(self, col, order):
         def get_key(row):
-            return row[col]
+            val = row[col]
+            if val is None:
+                val = 0
+            return val
         self.db_books_list.sort(reverse=not order, key=get_key)
         self.layoutChanged.emit()
 
@@ -272,6 +275,7 @@ class MainWindow(QMainWindow):
         db_books = self.session.query(sql.Book.title.label('Название'), sql.Author.name.label('Автор'),
                                       sql.Seria.name.label('Серия'), sql.Book.duration_hours.label('час.'),
                                       sql.Book.duration_minutes.label('мин.'), sql.Performer.name.label('Исполнитель'),
+                                      sql.Book.year.label('Год'), sql.Book.rating.label('Рейтинг'),
                                       sql.Book.free.label('Беспл.'), sql.Book)
 
         db_books = self.set_constraints(db_books)
