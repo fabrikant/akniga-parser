@@ -279,7 +279,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     logger.debug(args)
-    sql.crate_database(args.database)
+    sql.create_database(args.database)
     start_parsing(args.database, args.update, args.full_scan, args.start_page)
     if args.genres:
         start_parsing_sections(args.database, args.update)

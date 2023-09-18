@@ -119,7 +119,7 @@ class Book(Base):
         return f'title: {self.title}; id: {self.id}; url: {self.url}'
 
 
-def crate_database(connection_string):
+def create_database(connection_string):
     engine = create_engine(connection_string, echo=True)
     Base.metadata.create_all(engine)
     for sql_req in akniga_sql_requests.get_on_base_create_requests():

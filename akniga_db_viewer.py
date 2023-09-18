@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
 
     def open_database(self):
         if self.connection_string:
+            sql.create_database(self.connection_string)
             self.session = sql.get_session(self.connection_string)
             self.load_constraints()
             self.load_sections()
