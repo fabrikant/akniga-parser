@@ -190,89 +190,6 @@
          <string>Фильтры</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="6" column="0">
-          <widget class="QLineEdit" name="filter_performer">
-           <property name="clearButtonEnabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLineEdit" name="filter_title">
-           <property name="clearButtonEnabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLineEdit" name="filter_author">
-           <property name="clearButtonEnabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="0">
-          <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="0" colspan="2">
-            <widget class="QFrame" name="frame">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QLabel" name="label_7">
-                <property name="text">
-                 <string>Продолжительность от</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QTimeEdit" name="time_min">
-                <property name="buttonSymbols">
-                 <enum>QAbstractSpinBox::UpDownArrows</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_8">
-                <property name="text">
-                 <string>до</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QTimeEdit" name="time_max"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="14" column="0">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Исполнитель:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QPushButton" name="filter_author_clear">
-           <property name="icon">
-            <iconset>
-             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label">
            <property name="sizePolicy">
@@ -286,10 +203,11 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Автор:</string>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="filter_title_clear">
+           <property name="icon">
+            <iconset>
+             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
            </property>
           </widget>
          </item>
@@ -300,6 +218,96 @@
            </property>
           </widget>
          </item>
+         <item row="13" column="0" colspan="2">
+          <widget class="QCheckBox" name="filter_free">
+           <property name="text">
+            <string>Бесплатные</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLineEdit" name="filter_performer">
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLineEdit" name="filter_author">
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QPushButton" name="filter_author_clear">
+           <property name="icon">
+            <iconset>
+             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="0" column="0" colspan="2">
+            <widget class="QFrame" name="frame">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_7">
+              <item row="2" column="0" colspan="3">
+               <widget class="TimeSlider" name="filter_time_slider">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLineEdit" name="time_min">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QLineEdit" name="time_max">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>Длительность</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="15" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item row="6" column="1">
           <widget class="QPushButton" name="filter_performer_clear">
            <property name="icon">
@@ -308,11 +316,10 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QPushButton" name="filter_title_clear">
-           <property name="icon">
-            <iconset>
-             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Исполнитель:</string>
            </property>
           </widget>
          </item>
@@ -323,23 +330,22 @@
            </property>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Автор:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="filter_title">
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
          <item row="8" column="1">
           <widget class="QPushButton" name="filter_seria_clear">
-           <property name="icon">
-            <iconset>
-             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="0" colspan="2">
-          <widget class="QCheckBox" name="filter_free">
-           <property name="text">
-            <string>Бесплатные</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="1">
-          <widget class="QPushButton" name="filter_time_clear">
            <property name="icon">
             <iconset>
              <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
@@ -411,6 +417,16 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TimeSlider</class>
+   <extends>QSlider</extends>
+   <header location="global">time_slider</header>
+   <slots>
+    <signal>valueChanged()</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>table_books</tabstop>
@@ -707,14 +723,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>time_max</sender>
-   <signal>editingFinished()</signal>
+   <sender>filter_time_slider</sender>
+   <signal>valueChanged()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_filter_edit()</slot>
+   <slot>on_filter_time_slider_changed()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>198</x>
-     <y>350</y>
+     <x>180</x>
+     <y>375</y>
     </hint>
     <hint type="destinationlabel">
      <x>550</x>
@@ -723,30 +739,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>time_min</sender>
-   <signal>editingFinished()</signal>
+   <sender>filter_time_slider</sender>
+   <signal>sliderReleased()</signal>
    <receiver>MainWindow</receiver>
    <slot>on_filter_edit()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>350</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>550</x>
-     <y>395</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>filter_time_clear</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_filter_time_clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>392</x>
-     <y>326</y>
+     <x>180</x>
+     <y>375</y>
     </hint>
     <hint type="destinationlabel">
      <x>550</x>
@@ -770,6 +770,6 @@
   <slot>on_page_reload()</slot>
   <slot>on_page_set()</slot>
   <slot>on_filter_seria_clear()</slot>
-  <slot>on_filter_time_clear()</slot>
+  <slot>on_filter_time_slider_changed()</slot>
  </slots>
 </ui>

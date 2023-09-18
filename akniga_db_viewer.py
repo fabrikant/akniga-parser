@@ -6,9 +6,9 @@ from PyQt5.QtCore import Qt, QVariant, QTime
 from PyQt5.QtGui import QIntValidator
 import akniga_sql as sql
 import logging
+from time_slider import TimeSlider
 
 logger = logging.getLogger(__name__)
-
 
 class FilterItem(QStandardItem):
     def __init__(self, db_object=None, checkable=False):
@@ -33,6 +33,7 @@ class BooksTableModel(QAbstractTableModel):
         self.pages_count = self.records_count // self.records_on_page + 1 \
             if self.records_count % self.records_on_page else 0
         self.page_number = 1 if self.records_count else 0
+
 
     def rowCount(self, parent):
         if self.page_number < self.pages_count:
@@ -92,6 +93,11 @@ class MainWindow(QMainWindow):
         uic.loadUi('ui/main.ui', self)
         self.session = None
 
+        self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
+        # self.range_slider = QRangeSlider(Qt.Orientation.Horizontal)
+        # self.range_slider.setValue((20, 80))
+        # self.range_slider.show()
+
 
     def on_start_connecting(self):
         self.session = sql.get_session('sqlite:///akniga.db')
@@ -100,11 +106,6 @@ class MainWindow(QMainWindow):
         self.get_data()
 
     def on_filter_check_uncheck(self, checked_item):
-        self.get_data()
-
-    def on_filter_time_clear(self):
-        self.time_min.setTime(QTime(0, 0))
-        self.time_max.setTime(QTime(0, 0))
         self.get_data()
 
     def on_filter_title_clear(self):
@@ -163,6 +164,13 @@ class MainWindow(QMainWindow):
         model = self.table_books.model()
         model.set_page(int(f'0{self.page_current.text()}'))
         self.page_current.setText(f'{model.page_number}')
+
+    def on_filter_time_slider_changed(self, values):
+        slider = self.filter_time_slider
+        self.time_min.setText(slider.get_description(values[0]))
+        self.time_max.setText(slider.get_description(values[1]))
+
+
 
     # Жанры (Sections)
     def load_sections(self):
@@ -274,19 +282,17 @@ class MainWindow(QMainWindow):
         db_books = self.set_filter(db_books, self.filter_performer.text(), sql.Performer.name)
         db_books = self.set_filter(db_books, self.filter_seria.text(), sql.Seria.name)
 
-        time = self.time_min.time().hour() * 60 + self.time_min.time().minute()
-        if time:
-            db_books = db_books.filter(sql.Book.duration >= time)
-
-        time = self.time_max.time().hour() * 60 + self.time_max.time().minute()
-        if time:
-            db_books = db_books.filter(sql.Book.duration <= time)
+        time_slider = self.filter_time_slider
+        time_min_pos, time_max_pos = time_slider.sliderPosition()
+        if not time_slider.default_value(time_min_pos):
+            db_books = db_books.filter(sql.Book.duration >= time_slider.get_value(time_min_pos))
+        if not time_slider.default_value(time_max_pos):
+            db_books = db_books.filter(sql.Book.duration <= time_slider.get_value(time_max_pos))
 
         if self.filter_free.isChecked():
             db_books = db_books.filter(sql.Book.free)
 
         db_books = db_books.outerjoin(sql.Author).outerjoin(sql.Performer).outerjoin(sql.Seria)
-
 
         table = self.table_books
         table_model = BooksTableModel(db_books)
@@ -294,8 +300,8 @@ class MainWindow(QMainWindow):
         table_model.layoutChanged.connect(self.on_book_layout_changed_selected)
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
-        selectionModel = self.table_books.selectionModel()
-        selectionModel.selectionChanged.connect(self.on_book_layout_changed_selected)
+        selection_model = self.table_books.selectionModel()
+        selection_model.selectionChanged.connect(self.on_book_layout_changed_selected)
 
         # Интерфейсные вещи
         self.set_columns_width(table, 350)
