@@ -158,11 +158,13 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_database">
+   <widget class="QMenu" name="menu_file">
     <property name="title">
-     <string>База данных</string>
+     <string>Файл</string>
     </property>
-    <addaction name="connect_action"/>
+    <addaction name="db_connect_action"/>
+    <addaction name="separator"/>
+    <addaction name="exit_action"/>
    </widget>
    <widget class="QMenu" name="menu_tools">
     <property name="title">
@@ -170,7 +172,7 @@
     </property>
     <addaction name="filter_doc_action"/>
    </widget>
-   <addaction name="menu_database"/>
+   <addaction name="menu_file"/>
    <addaction name="menu_tools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -400,9 +402,13 @@
     </layout>
    </widget>
   </widget>
-  <action name="connect_action">
+  <action name="db_connect_action">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/database.png</normaloff>img/database.png</iconset>
+   </property>
    <property name="text">
-    <string>Подключиться</string>
+    <string>Подключиться к базе</string>
    </property>
   </action>
   <action name="filter_doc_action">
@@ -412,8 +418,21 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>img/search.png</normaloff>img/search.png</iconset>
+   </property>
    <property name="text">
     <string>Панель фильтров</string>
+   </property>
+  </action>
+  <action name="exit_action">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/close.png</normaloff>img/close.png</iconset>
+   </property>
+   <property name="text">
+    <string>Выход</string>
    </property>
   </action>
  </widget>
@@ -435,7 +454,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>connect_action</sender>
+   <sender>db_connect_action</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>on_start_connecting()</slot>
@@ -754,6 +773,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>table_books</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_table_book_dbl_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>751</x>
+     <y>313</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exit_action</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_start_connecting()</slot>
@@ -771,5 +822,6 @@
   <slot>on_page_set()</slot>
   <slot>on_filter_seria_clear()</slot>
   <slot>on_filter_time_slider_changed()</slot>
+  <slot>on_table_book_dbl_click()</slot>
  </slots>
 </ui>
