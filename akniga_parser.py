@@ -30,16 +30,23 @@ def books_url_iter(soup_page):
             book_url = soup_book.find('a')
             if not book_url is None:
                 book_url = book_url['href']
-                logger.info(f'find book url: {book_url}')
+                logger.debug(f'find book url: {book_url}')
                 yield book_url
 
 
-def get_next_page_url(soup_page):
+def get_next_page_url(soup_page, stop_page_number=None ):
+    result = None
     soup_next_page = (soup_page.find('div', {'class': 'page__nav'}).
                       find('a', {'class': 'page__nav--next'}))
     if not soup_next_page is None:
-        return soup_next_page['href']
-    return None
+        result = soup_next_page['href']
+        if stop_page_number:
+            next_page_number = result.replace('/', '').split('page')
+            if len(next_page_number):
+                next_page_number = convert_to_number(next_page_number[-1])
+                if stop_page_number < next_page_number > 0:
+                    result = None
+    return result
 
 
 def convert_to_float(float_string):
@@ -172,14 +179,14 @@ def add_book_to_database(book_url, session, update):
 
                     sql.create_book_filter_if_not_exists(session, book_id=book_db.id, filter_id=filter_db.id)
         session.commit()
-        logger.info(f'BOOK processing completed - {book_db}')
+        logger.info(f'BOOK complete - {book_db}')
         return book_db
     else:
         logger.error(f'code: {res.status_code} while get: {book_url}')
         return None
 
 
-def start_parsing(connection_string, update, full_scan, start_page):
+def start_parsing(connection_string, update, full_scan, start_page, stop_page):
     session = sql.get_session(connection_string)
     processed_urls = []
     get_url = f'{akniga_url}/index/page{start_page}/'
@@ -198,7 +205,7 @@ def start_parsing(connection_string, update, full_scan, start_page):
                 if not full_scan:
                     processed_urls.append(book_url)
 
-            get_url = get_next_page_url(soup_page)
+            get_url = get_next_page_url(soup_page, stop_page)
         else:
             logger.error(f'code: {res.status_code} while get: {get_url}')
             return
@@ -267,19 +274,27 @@ if __name__ == '__main__':
                         f'Например (по умолчанию): [{database_connection_string}]. '
                         'Узнать больше: https://docs.sqlalchemy.org/en/20/core/engines.html')
     parser.add_argument('-u', '--update', default=False, action='store_true',
-                        help='Обновлять  найденные в базе данные.')
+                        help='Обновлять найденные объекты свежими данными.')
     parser.add_argument('-f', '--full-scan',  default=False, action='store_true',
-                        help='Продолжить сканирование, даже после обнаружения книги в базе данных. '
-                        'Если нужно просто добавить в базу новые книги, то опцию лучше не активировать.')
-    parser.add_argument('-s', '--start-page', type=int, default=1,
-                        help='Страница с которой начинается сканирование. По умолчанию 1. Полезно если нужно '
-                             'продолжить после сбоя. Рекомендуется использовать с параметром -f')
+                        help='Без этого параметра сканирование прервется, как только следующая книга будет найдена в '
+                             'базе. Если нужно просто привести в актуальное состояние базу (добавить новые книги), '
+                             'то опцию не активировать.')
+    parser.add_argument('--start-page', type=int, default=1,
+                        help='Страница с которой начинается сканирование. Если параметр не указан, то с первой. '
+                             'Полезно, если необходимо продолжить после сбоя. '
+                             'Рекомендуется использовать с параметром -f')
+    parser.add_argument('--stop-page', type=int, default=0,
+                        help='Последняя сканируемая страница. Полезно, если необходимо просканировать определенный '
+                             'диапазон страниц. Если параметр не указан, то ограничивать сканирование будет параметр -f')
     parser.add_argument('-g', '--genres',  default=False, action='store_true',
-                        help=f'Дополнительно просканировать книги по жанрам. Адреса: {akniga_url}/sections/')
+                        help=f'Дополнительно просканировать книги по жанрам. Адреса: {akniga_url}/sections/'
+                             'При обычном сканировании невозможно определить к каким жанрам относится книга, поэтому'
+                             'требуется еще один проход. Если не планируется осуществлять отбор по жанрам, можно не'
+                             'выполнять')
 
     args = parser.parse_args()
     logger.debug(args)
     sql.create_database(args.database)
-    start_parsing(args.database, args.update, args.full_scan, args.start_page)
+    start_parsing(args.database, args.update, args.full_scan, args.start_page, args.stop_page)
     if args.genres:
         start_parsing_sections(args.database, args.update)
