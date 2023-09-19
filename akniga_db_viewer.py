@@ -323,7 +323,7 @@ class MainWindow(QMainWindow):
 
         db_books = db_books.outerjoin(sql.Author).outerjoin(sql.Performer).outerjoin(sql.Seria)
 
-        self.table_books.on_get_data(db_books, self)
+        self.table_books.on_get_data(db_books, self, app.clipboard())
 
 
 if __name__ == "__main__":

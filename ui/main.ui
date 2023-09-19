@@ -461,7 +461,7 @@ color: rgb(255, 255, 255);</string>
   <action name="exit_action">
    <property name="icon">
     <iconset>
-     <normaloff>img/close.png</normaloff>img/close.png</iconset>
+     <normaloff>img/quit.png</normaloff>img/quit.png</iconset>
    </property>
    <property name="text">
     <string>Закрыть программу</string>

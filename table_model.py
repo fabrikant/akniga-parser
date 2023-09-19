@@ -47,6 +47,9 @@ class BooksTableModel(QAbstractTableModel):
     def get_description(self, row):
         return self.db_books_list[row][len(self.db_books.column_descriptions) - 1].description
 
+    def get_url(self, row):
+        return self.db_books_list[row][len(self.db_books.column_descriptions) - 1].url
+
     def sort(self, col, order):
         def get_key(row):
             val = row[col]
