@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
 from PyQt5.QtCore import QSettings, QProcess
 from PyQt5.Qt import QStandardItemModel, QStandardItem
-from PyQt5.QtGui import QIntValidator
+from PyQt5.QtGui import QIntValidator, QTextCursor
 from table_model import BooksTableModel
 import akniga_sql as sql
 import logging
@@ -60,9 +60,11 @@ class MainWindow(QMainWindow):
     def on_db_update(self):
         def print_message(data):
             stdout = bytes(data).decode("utf8")
-            stdout = stdout.replace("\r\r", "\r")
             if not "" == stdout:
-                self.console_text.append(stdout)
+                self.console_text.moveCursor(QTextCursor.End)
+                self.console_text.insertPlainText(stdout)
+                self.console_text.moveCursor(QTextCursor.End)
+
         def on_stdout():
             print_message(self.update_process.readAllStandardOutput())
         def on_stderr():
