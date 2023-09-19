@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
 from PyQt5.QtCore import QSettings, QProcess
@@ -27,14 +28,14 @@ class MainWindow(QMainWindow):
         self.config_file_name = 'settings.ini'
         self.read_settings()
         self.session = None
+        self.update_process = None
         self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
         self.open_database()
-        self.update_process = None
         self.console_dock.hide()
 
     def read_settings(self):
         settings = QSettings(self.config_file_name, QSettings.IniFormat)
-        self.connection_string = settings.value('connection_string', 'sqlite:///akniga.sqlite')
+        self.connection_string = settings.value('connection_string')
 
     def write_settings(self):
         settings = QSettings(self.config_file_name, QSettings.IniFormat)
@@ -42,20 +43,35 @@ class MainWindow(QMainWindow):
 
 
     def open_database(self):
+        self.setWindowTitle('akniga db viewer')
         if self.connection_string:
-            sql.create_database(self.connection_string)
-            self.session = sql.get_session(self.connection_string)
-            self.load_constraints()
-            self.load_sections()
-            self.get_data()
+            try:
+                self.session = sql.get_session(self.connection_string)
+                self.load_constraints()
+                self.load_sections()
+                self.get_data()
+                self.setWindowTitle(f'{self.windowTitle()}: {self.connection_string}')
+            except Exception as message:
+                logger.error(message)
 
-    def on_start_open_base(self):
+
+    def on_db_connect(self):
         file_name, _ = QFileDialog.getOpenFileName(self, 'Открыть файл',
                                                    filter='Базы sqlite (*.sqlite);;Все файлы (*.*)')
         if file_name:
             self.connection_string = f'sqlite:///{file_name}'
-            self.write_settings()
             self.open_database()
+            self.write_settings()
+
+    def on_db_create(self):
+        file_name, _ = QFileDialog.getSaveFileName(self, caption='Имя файла', filter='Базы sqlite (*.sqlite)')
+        if file_name:
+            if os.path.exists(file_name):
+                os.remove(file_name)
+            self.connection_string = f'sqlite:///{file_name}'
+            sql.create_database(self.connection_string)
+            self.open_database()
+            self.write_settings()
 
     def on_db_update(self):
         def print_message(data):
@@ -71,8 +87,10 @@ class MainWindow(QMainWindow):
             print_message(self.update_process.readAllStandardError())
         def on_finished():
             self.update_process = None
+            self.db_stop_update_action.setEnabled(False)
 
-        if self.connection_string:
+        if self.connection_string and self.session and not self.update_process:
+            self.db_stop_update_action.setEnabled(True)
             self.console_dock.show()
             self.update_process = QProcess()
             self.update_process.readyReadStandardOutput.connect(on_stdout)
@@ -84,9 +102,14 @@ class MainWindow(QMainWindow):
             except Exception as error:
                 self.console_text.append(f"{error}")
 
-    def on_close_console(self, visible):
-        if not visible and not self.update_process is None:
+    def on_db_stop_update(self):
+        self.db_stop_update_action.setEnabled(False)
+        if not self.update_process is None:
             self.update_process.kill()
+            message = 'the update has been terminated'
+            self.console_text.append(message)
+            logger.warning(message)
+            self.console_text.moveCursor(QTextCursor.End)
 
     def on_filter_check_uncheck(self, checked_item):
         self.get_data()
@@ -141,6 +164,8 @@ class MainWindow(QMainWindow):
         self.page_current.setText(f'{model.page_number}')
 
     def on_page_reload(self):
+        self.load_constraints()
+        self.load_sections()
         self.get_data()
 
     def on_page_set(self):
@@ -152,7 +177,6 @@ class MainWindow(QMainWindow):
         slider = self.filter_time_slider
         self.time_min.setText(slider.get_description(values[0]))
         self.time_max.setText(slider.get_description(values[1]))
-
 
     def on_table_book_dbl_click(self, model_index):
         dict = {'Название': self.filter_title,
@@ -169,6 +193,9 @@ class MainWindow(QMainWindow):
 
     # Жанры (Sections)
     def load_sections(self):
+        if self.session is None:
+            return
+
         sections_list = self.sections_list
         model = QStandardItemModel()
         model.itemChanged.connect(self.on_filter_check_uncheck)
@@ -198,6 +225,8 @@ class MainWindow(QMainWindow):
 
     # Характеристики
     def load_constraints(self):
+        if self.session is None:
+            return
 
         def create_constraints_items(parent_item, type_id, parent_id):
             for db_filter in (self.session.query(sql.Filter).filter_by(types_id=type_id, parent_id=parent_id).
@@ -310,9 +339,6 @@ class MainWindow(QMainWindow):
         for num_col in range(table.model().columnCount(None)):
             width = max_width if table.columnWidth(num_col) > max_width else table.columnWidth(num_col)
             table.setColumnWidth(num_col, width)
-
-
-
 
 
 if __name__ == "__main__":

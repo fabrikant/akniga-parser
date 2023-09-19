@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>akniga db viewer</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>img/database.png</normaloff>img/database.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
     <item row="0" column="0">
@@ -162,7 +166,9 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="db_open_action"/>
+    <addaction name="db_connect_action"/>
+    <addaction name="db_create_action"/>
+    <addaction name="db_update_action"/>
     <addaction name="separator"/>
     <addaction name="exit_action"/>
    </widget>
@@ -171,7 +177,9 @@
      <string>Инструменты</string>
     </property>
     <addaction name="filter_doc_action"/>
-    <addaction name="db_update_action"/>
+    <addaction name="console_doc_action"/>
+    <addaction name="separator"/>
+    <addaction name="db_stop_update_action"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_tools"/>
@@ -423,13 +431,13 @@ color: rgb(255, 255, 255);</string>
     </layout>
    </widget>
   </widget>
-  <action name="db_open_action">
+  <action name="db_connect_action">
    <property name="icon">
     <iconset>
-     <normaloff>img/database.png</normaloff>img/database.png</iconset>
+     <normaloff>img/database_connect.png</normaloff>img/database_connect.png</iconset>
    </property>
    <property name="text">
-    <string>Открыть базу</string>
+    <string>Подключиться к базе</string>
    </property>
   </action>
   <action name="filter_doc_action">
@@ -453,7 +461,7 @@ color: rgb(255, 255, 255);</string>
      <normaloff>img/close.png</normaloff>img/close.png</iconset>
    </property>
    <property name="text">
-    <string>Выход</string>
+    <string>Закрыть программу</string>
    </property>
   </action>
   <action name="db_update_action">
@@ -462,7 +470,40 @@ color: rgb(255, 255, 255);</string>
      <normaloff>img/get_update.png</normaloff>img/get_update.png</iconset>
    </property>
    <property name="text">
-    <string>Обновить базу</string>
+    <string>Обновить (загрузить) базу</string>
+   </property>
+  </action>
+  <action name="db_create_action">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/database_offline.png</normaloff>img/database_offline.png</iconset>
+   </property>
+   <property name="text">
+    <string>Создать базу (пустую)</string>
+   </property>
+  </action>
+  <action name="console_doc_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>img/completer_number.png</normaloff>img/completer_number.png</iconset>
+   </property>
+   <property name="text">
+    <string>Консоль</string>
+   </property>
+  </action>
+  <action name="db_stop_update_action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>img/act_abort.png</normaloff>img/act_abort.png</iconset>
+   </property>
+   <property name="text">
+    <string>Прервать загрузку (обновление) базы</string>
    </property>
   </action>
  </widget>
@@ -484,10 +525,10 @@ color: rgb(255, 255, 255);</string>
  <resources/>
  <connections>
   <connection>
-   <sender>db_open_action</sender>
+   <sender>db_connect_action</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_start_open_base()</slot>
+   <slot>on_db_connect()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -852,14 +893,46 @@ color: rgb(255, 255, 255);</string>
    </hints>
   </connection>
   <connection>
-   <sender>console_dock</sender>
-   <signal>visibilityChanged(bool)</signal>
+   <sender>db_create_action</sender>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_close_console()</slot>
+   <slot>on_db_create()</slot>
    <hints>
     <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>console_doc_action</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>console_dock</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
      <x>550</x>
      <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>db_stop_update_action</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_db_stop_update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>550</x>
@@ -869,7 +942,7 @@ color: rgb(255, 255, 255);</string>
   </connection>
  </connections>
  <slots>
-  <slot>on_start_open_base()</slot>
+  <slot>on_db_connect()</slot>
   <slot>on_book_activate()</slot>
   <slot>on_remove_constraints()</slot>
   <slot>on_remove_sections()</slot>
@@ -886,6 +959,7 @@ color: rgb(255, 255, 255);</string>
   <slot>on_filter_time_slider_changed()</slot>
   <slot>on_table_book_dbl_click()</slot>
   <slot>on_db_update()</slot>
-  <slot>on_close_console()</slot>
+  <slot>on_db_stop_update()</slot>
+  <slot>on_db_create()</slot>
  </slots>
 </ui>
