@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>img/database.png</normaloff>img/database.png</iconset>
+    <normaloff>img/database_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/database_FILL0_wght400_GRAD0_opsz24.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
@@ -62,7 +62,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>img/page_prev.png</normaloff>img/page_prev.png</iconset>
+          <normaloff>img/arrow_back_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/arrow_back_FILL0_wght400_GRAD0_opsz24.png</iconset>
         </property>
        </widget>
       </item>
@@ -95,7 +95,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>img/reload.png</normaloff>img/reload.png</iconset>
+          <normaloff>img/refresh_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/refresh_FILL0_wght400_GRAD0_opsz24.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -112,7 +112,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>img/page_next.png</normaloff>img/page_next.png</iconset>
+          <normaloff>img/arrow_forward_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/arrow_forward_FILL0_wght400_GRAD0_opsz24.png</iconset>
         </property>
        </widget>
       </item>
@@ -221,7 +221,7 @@
           <widget class="QPushButton" name="filter_title_clear">
            <property name="icon">
             <iconset>
-             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+             <normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</iconset>
            </property>
           </widget>
          </item>
@@ -257,7 +257,7 @@
           <widget class="QPushButton" name="filter_author_clear">
            <property name="icon">
             <iconset>
-             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+             <normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</iconset>
            </property>
           </widget>
          </item>
@@ -326,7 +326,7 @@
           <widget class="QPushButton" name="filter_performer_clear">
            <property name="icon">
             <iconset>
-             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+             <normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</iconset>
            </property>
           </widget>
          </item>
@@ -362,7 +362,7 @@
           <widget class="QPushButton" name="filter_seria_clear">
            <property name="icon">
             <iconset>
-             <normaloff>img/act_delete.png</normaloff>img/act_delete.png</iconset>
+             <normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</iconset>
            </property>
           </widget>
          </item>
@@ -380,6 +380,10 @@
           <widget class="QCommandLinkButton" name="remove_sections">
            <property name="text">
             <string>Удалить отбор</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>img/event_list_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/event_list_FILL0_wght400_GRAD0_opsz24.png</iconset>
            </property>
           </widget>
          </item>
@@ -404,6 +408,10 @@
           <widget class="QCommandLinkButton" name="remove_constraints">
            <property name="text">
             <string>Удалить отбор</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>img/event_list_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/event_list_FILL0_wght400_GRAD0_opsz24.png</iconset>
            </property>
           </widget>
          </item>
@@ -437,7 +445,7 @@ color: rgb(255, 255, 255);</string>
   <action name="db_connect_action">
    <property name="icon">
     <iconset>
-     <normaloff>img/database_connect.png</normaloff>img/database_connect.png</iconset>
+     <normaloff>img/conversion_path_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/conversion_path_FILL0_wght400_GRAD0_opsz24.png</iconset>
    </property>
    <property name="text">
     <string>Подключиться к базе</string>
@@ -452,7 +460,7 @@ color: rgb(255, 255, 255);</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>img/search.png</normaloff>img/search.png</iconset>
+     <normaloff>img/filter_alt_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/filter_alt_FILL0_wght400_GRAD0_opsz24.png</iconset>
    </property>
    <property name="text">
     <string>Панель фильтров</string>
@@ -461,7 +469,7 @@ color: rgb(255, 255, 255);</string>
   <action name="exit_action">
    <property name="icon">
     <iconset>
-     <normaloff>img/quit.png</normaloff>img/quit.png</iconset>
+     <normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</iconset>
    </property>
    <property name="text">
     <string>Закрыть программу</string>
@@ -470,7 +478,7 @@ color: rgb(255, 255, 255);</string>
   <action name="db_update_action">
    <property name="icon">
     <iconset>
-     <normaloff>img/get_update.png</normaloff>img/get_update.png</iconset>
+     <normaloff>img/sync_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/sync_FILL0_wght400_GRAD0_opsz24.png</iconset>
    </property>
    <property name="text">
     <string>Обновить (загрузить) базу</string>
@@ -479,7 +487,7 @@ color: rgb(255, 255, 255);</string>
   <action name="db_create_action">
    <property name="icon">
     <iconset>
-     <normaloff>img/database_offline.png</normaloff>img/database_offline.png</iconset>
+     <normaloff>img/add_box_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/add_box_FILL0_wght400_GRAD0_opsz24.png</iconset>
    </property>
    <property name="text">
     <string>Создать базу (пустую)</string>
@@ -491,7 +499,7 @@ color: rgb(255, 255, 255);</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>img/completer_number.png</normaloff>img/completer_number.png</iconset>
+     <normaloff>img/web_asset_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/web_asset_FILL0_wght400_GRAD0_opsz24.png</iconset>
    </property>
    <property name="text">
     <string>Консоль</string>
@@ -503,7 +511,7 @@ color: rgb(255, 255, 255);</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>img/act_abort.png</normaloff>img/act_abort.png</iconset>
+     <normaloff>img/sync_disabled_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/sync_disabled_FILL0_wght400_GRAD0_opsz24.png</iconset>
    </property>
    <property name="text">
     <string>Прервать загрузку (обновление) базы</string>

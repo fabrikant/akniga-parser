@@ -8,8 +8,8 @@ class TableBooks(QTableView):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.addAction(QAction(QIcon("ui/img/homepage.png"),'Перейти на страницу книги', self, triggered=self.open_url))
-        self.addAction(QAction(QIcon("ui/img/act_copy.png"), 'Скопировать url в буфер', self, triggered=self.copy_url))
+        self.addAction(QAction(QIcon("ui/img/open_in_browser.png"),'Перейти на страницу книги', self, triggered=self.open_url))
+        self.addAction(QAction(QIcon("ui/img/content_copy.png"), 'Скопировать url в буфер', self, triggered=self.copy_url))
 
 
     def on_get_data(self, db_books, main_window, clipboard):
