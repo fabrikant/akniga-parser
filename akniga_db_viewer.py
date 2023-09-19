@@ -80,6 +80,8 @@ class MainWindow(QMainWindow):
                 self.console_text.moveCursor(QTextCursor.End)
                 self.console_text.insertPlainText(stdout)
                 self.console_text.moveCursor(QTextCursor.End)
+                if not self.console_text.isVisible():
+                    self.statusbar.showMessage(stdout, 2000)
 
         def on_stdout():
             print_message(self.update_process.readAllStandardOutput())
