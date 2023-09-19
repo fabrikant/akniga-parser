@@ -4,12 +4,12 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
 from PyQt5.QtCore import QSettings, QProcess
 from PyQt5.Qt import QStandardItemModel, QStandardItem
-from PyQt5.QtGui import QIntValidator, QTextCursor
-from table_model import BooksTableModel
+from PyQt5.QtGui import QTextCursor
 import akniga_sql as sql
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 class FilterItem(QStandardItem):
     def __init__(self, db_object=None, checkable=False):
@@ -85,8 +85,10 @@ class MainWindow(QMainWindow):
 
         def on_stdout():
             print_message(self.update_process.readAllStandardOutput())
+
         def on_stderr():
             print_message(self.update_process.readAllStandardError())
+
         def on_finished():
             self.update_process = None
             self.db_stop_update_action.setEnabled(False)
@@ -321,26 +323,7 @@ class MainWindow(QMainWindow):
 
         db_books = db_books.outerjoin(sql.Author).outerjoin(sql.Performer).outerjoin(sql.Seria)
 
-        table = self.table_books
-        table_model = BooksTableModel(db_books)
-        table.setModel(table_model)
-        table_model.layoutChanged.connect(self.on_book_layout_changed_selected)
-        table.resizeColumnsToContents()
-        table.resizeRowsToContents()
-        selection_model = self.table_books.selectionModel()
-        selection_model.selectionChanged.connect(self.on_book_layout_changed_selected)
-
-        # Интерфейсные вещи
-        self.set_columns_width(table, 350)
-        self.page_count.setText(f'из {table_model.pages_count}')
-        self.record_count.setText(f'Всего записей: {table_model.records_count}')
-        self.page_current.setText(f'{table_model.page_number}')
-        self.page_current.setValidator(QIntValidator(1, table_model.pages_count))
-
-    def set_columns_width(self, table, max_width):
-        for num_col in range(table.model().columnCount(None)):
-            width = max_width if table.columnWidth(num_col) > max_width else table.columnWidth(num_col)
-            table.setColumnWidth(num_col, width)
+        self.table_books.on_get_data(db_books, self)
 
 
 if __name__ == "__main__":

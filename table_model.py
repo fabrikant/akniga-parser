@@ -18,7 +18,6 @@ class BooksTableModel(QAbstractTableModel):
             if self.records_count % self.records_on_page else 0
         self.page_number = 1 if self.records_count else 0
 
-
     def rowCount(self, parent):
         if self.page_number < self.pages_count:
             return self.records_on_page
