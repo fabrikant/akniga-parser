@@ -187,7 +187,6 @@
    <addaction name="menu_file"/>
    <addaction name="menu_tools"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="filter_dock">
    <attribute name="dockWidgetArea">
     <number>1</number>

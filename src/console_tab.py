@@ -45,6 +45,8 @@ class ConsoleTab(QTabWidget):
 
     def __init__(self, parent):
         super().__init__(parent)
+        # Сюда передается док, который нужно закрывать, когда больше нет закладок
+        self.console_dock = None
 
     def start_process(self, command):
 
@@ -73,3 +75,6 @@ class ConsoleTab(QTabWidget):
         if item:
             item.stop_process()
             item.close()
+        if not self.console_dock is None:
+            if not self.count():
+                self.console_dock.close()

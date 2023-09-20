@@ -18,7 +18,8 @@ class TableBooks(QTableView):
                     triggered=self.copy_url))
         self.addAction(
             QAction(QIcon("ui/img/download.png"), 'Скачать', self, triggered=self.download_book))
-
+        # Сюда передается функция для запуска процесса скачивания
+        self.start_process_slot = None
 
     def on_get_data(self, db_books, main_window, clipboard):
 

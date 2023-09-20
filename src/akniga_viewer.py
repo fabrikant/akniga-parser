@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
         self.open_database()
         self.console_dock.hide()
         self.table_books.start_process_slot = self.on_request_to_start_process
+        self.console_tab.console_dock = self.console_dock
 
     def read_settings(self):
         settings = QSettings(self.config_file_name, QSettings.IniFormat)
@@ -89,7 +90,7 @@ class MainWindow(QMainWindow):
         if settings.value('DatabaseUpdate/update', defaultValue=0, type=int) == 2:
             command += ['--update']
         if settings.value('DatabaseUpdate/genres', defaultValue=2, type=int) == 2:
-            command += ['-genres']
+            command += ['--genres']
 
         self.console_tab.start_process(command)
 

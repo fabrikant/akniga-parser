@@ -42,8 +42,8 @@ class SettingsDialog(QDialog):
         settings = QSettings(config_file_name, QSettings.IniFormat)
         settings.setValue('connection_string', self.connection_string.text())
 
-        settings.setValue('DatabaseUpdate/start-page', int(self.page_start.text()))
-        settings.setValue('DatabaseUpdate/stop-page', int(self.page_stop.text()))
+        settings.setValue('DatabaseUpdate/start-page', int(f'0{self.page_start.text()}'))
+        settings.setValue('DatabaseUpdate/stop-page', int(f'0{self.page_stop.text()}'))
         settings.setValue('DatabaseUpdate/full-scan', self.full_scan.checkState())
         settings.setValue('DatabaseUpdate/update', self.update.checkState())
         settings.setValue('DatabaseUpdate/genres', self.genres.checkState())
