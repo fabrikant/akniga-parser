@@ -6,6 +6,8 @@ from PyQt5.QtCore import QSettings, QProcess
 from PyQt5.Qt import QStandardItemModel, QStandardItem
 from PyQt5.QtGui import QTextCursor
 import akniga_sql as sql
+from akniga_settings import SettingsDialog
+from akniga_global import config_file_name
 import logging
 
 logger = logging.getLogger(__name__)
@@ -25,7 +27,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi('ui/main.ui', self)
-        self.config_file_name = 'settings.ini'
+        self.config_file_name = config_file_name
         self.read_settings()
         self.session = None
         self.update_process = None
@@ -105,6 +107,11 @@ class MainWindow(QMainWindow):
                 self.update_process.start("python", command)
             except Exception as error:
                 self.console_text.append(f"{error}")
+
+    def on_settings(self):
+        print('on_settings')
+        dlg = SettingsDialog()
+        dlg.exec()
 
     def on_db_stop_update(self):
         self.db_stop_update_action.setEnabled(False)

@@ -173,6 +173,8 @@
     <addaction name="db_create_action"/>
     <addaction name="db_update_action"/>
     <addaction name="separator"/>
+    <addaction name="settings"/>
+    <addaction name="separator"/>
     <addaction name="exit_action"/>
    </widget>
    <widget class="QMenu" name="menu_tools">
@@ -197,7 +199,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab1">
         <attribute name="title">
@@ -517,6 +519,15 @@ color: rgb(255, 255, 255);</string>
     <string>Прервать загрузку (обновление) базы</string>
    </property>
   </action>
+  <action name="settings">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/settings_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/settings_FILL0_wght400_GRAD0_opsz24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Настройки</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -535,8 +546,29 @@ color: rgb(255, 255, 255);</string>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>table_books</tabstop>
+  <tabstop>filter_title</tabstop>
+  <tabstop>filter_title_clear</tabstop>
+  <tabstop>filter_author</tabstop>
+  <tabstop>filter_author_clear</tabstop>
+  <tabstop>filter_performer</tabstop>
+  <tabstop>filter_performer_clear</tabstop>
+  <tabstop>filter_seria</tabstop>
+  <tabstop>filter_seria_clear</tabstop>
+  <tabstop>time_min</tabstop>
+  <tabstop>time_max</tabstop>
+  <tabstop>filter_time_slider</tabstop>
+  <tabstop>filter_free</tabstop>
+  <tabstop>remove_sections</tabstop>
+  <tabstop>sections_list</tabstop>
+  <tabstop>remove_constraints</tabstop>
   <tabstop>constraints_tree</tabstop>
+  <tabstop>page_reload</tabstop>
+  <tabstop>page_prev</tabstop>
+  <tabstop>page_current</tabstop>
+  <tabstop>page_next</tabstop>
+  <tabstop>table_books</tabstop>
+  <tabstop>description</tabstop>
+  <tabstop>console_text</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -956,6 +988,22 @@ color: rgb(255, 255, 255);</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>settings</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_settings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_db_connect()</slot>
@@ -977,5 +1025,6 @@ color: rgb(255, 255, 255);</string>
   <slot>on_db_update()</slot>
   <slot>on_db_stop_update()</slot>
   <slot>on_db_create()</slot>
+  <slot>on_settings()</slot>
  </slots>
 </ui>

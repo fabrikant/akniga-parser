@@ -1,0 +1,6 @@
+config_file_name = 'config/settings.ini'
+NAMING_DEEP = 'deep'
+NAMING_WIDE = 'wide'
+NAMING_ID = 'id'
+DOWNLOAD_REQUESTS = 'requests'
+DOWNLOAD_FFMPEG = 'ffmpeg'
