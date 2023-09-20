@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>img/database_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/database_FILL0_wght400_GRAD0_opsz24.png</iconset>
+    <normaloff>img/book.png</normaloff>img/book.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
@@ -183,8 +183,6 @@
     </property>
     <addaction name="filter_doc_action"/>
     <addaction name="console_doc_action"/>
-    <addaction name="separator"/>
-    <addaction name="db_stop_update_action"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_tools"/>
@@ -199,7 +197,10 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
+       </property>
+       <property name="tabsClosable">
+        <bool>false</bool>
        </property>
        <widget class="QWidget" name="tab1">
         <attribute name="title">
@@ -434,10 +435,15 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_8">
      <item row="0" column="0">
-      <widget class="QTextBrowser" name="console_text">
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(0, 0, 0);
-color: rgb(255, 255, 255);</string>
+      <widget class="ConsoleTab" name="console_tab">
+       <property name="tabPosition">
+        <enum>QTabWidget::South</enum>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -507,18 +513,6 @@ color: rgb(255, 255, 255);</string>
     <string>Консоль</string>
    </property>
   </action>
-  <action name="db_stop_update_action">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset>
-     <normaloff>img/sync_disabled_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/sync_disabled_FILL0_wght400_GRAD0_opsz24.png</iconset>
-   </property>
-   <property name="text">
-    <string>Прервать загрузку (обновление) базы</string>
-   </property>
-  </action>
   <action name="settings">
    <property name="icon">
     <iconset>
@@ -542,6 +536,15 @@ color: rgb(255, 255, 255);</string>
    <class>TableBooks</class>
    <extends>QTableView</extends>
    <header location="global">table_books</header>
+  </customwidget>
+  <customwidget>
+   <class>ConsoleTab</class>
+   <extends>QTabWidget</extends>
+   <header location="global">console_tab</header>
+   <container>1</container>
+   <slots>
+    <slot>on_close_tab_request()</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -568,7 +571,6 @@ color: rgb(255, 255, 255);</string>
   <tabstop>page_next</tabstop>
   <tabstop>table_books</tabstop>
   <tabstop>description</tabstop>
-  <tabstop>console_text</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -973,22 +975,6 @@ color: rgb(255, 255, 255);</string>
    </hints>
   </connection>
   <connection>
-   <sender>db_stop_update_action</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_db_stop_update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>550</x>
-     <y>395</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>settings</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1001,6 +987,22 @@ color: rgb(255, 255, 255);</string>
     <hint type="destinationlabel">
      <x>550</x>
      <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>console_tab</sender>
+   <signal>tabCloseRequested(int)</signal>
+   <receiver>console_tab</receiver>
+   <slot>on_close_tab_request()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>550</x>
+     <y>758</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>550</x>
+     <y>758</y>
     </hint>
    </hints>
   </connection>
@@ -1023,7 +1025,6 @@ color: rgb(255, 255, 255);</string>
   <slot>on_filter_time_slider_changed()</slot>
   <slot>on_table_book_dbl_click()</slot>
   <slot>on_db_update()</slot>
-  <slot>on_db_stop_update()</slot>
   <slot>on_db_create()</slot>
   <slot>on_settings()</slot>
  </slots>

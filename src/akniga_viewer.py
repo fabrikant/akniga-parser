@@ -2,9 +2,8 @@ import sys
 import os
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
-from PyQt5.QtCore import QSettings, QProcess
+from PyQt5.QtCore import QSettings
 from PyQt5.Qt import QStandardItemModel, QStandardItem
-from PyQt5.QtGui import QTextCursor
 import akniga_sql as sql
 from akniga_settings import SettingsDialog
 from akniga_global import config_file_name
@@ -30,10 +29,10 @@ class MainWindow(QMainWindow):
         self.config_file_name = config_file_name
         self.read_settings()
         self.session = None
-        self.update_process = None
         self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
         self.open_database()
         self.console_dock.hide()
+        self.table_books.start_process_slot = self.on_request_to_start_process
 
     def read_settings(self):
         settings = QSettings(self.config_file_name, QSettings.IniFormat)
@@ -42,7 +41,6 @@ class MainWindow(QMainWindow):
     def write_settings(self):
         settings = QSettings(self.config_file_name, QSettings.IniFormat)
         settings.setValue('connection_string', self.connection_string)
-
 
     def open_database(self):
         self.setWindowTitle('akniga db viewer')
@@ -55,7 +53,6 @@ class MainWindow(QMainWindow):
                 self.setWindowTitle(f'{self.windowTitle()}: {self.connection_string}')
             except Exception as message:
                 logger.error(message)
-
 
     def on_db_connect(self):
         file_name, _ = QFileDialog.getOpenFileName(self, 'Открыть файл',
@@ -76,51 +73,33 @@ class MainWindow(QMainWindow):
             self.write_settings()
 
     def on_db_update(self):
-        def print_message(data):
-            stdout = bytes(data).decode("utf8")
-            if not "" == stdout:
-                self.console_text.moveCursor(QTextCursor.End)
-                self.console_text.insertPlainText(stdout)
-                self.console_text.moveCursor(QTextCursor.End)
-                if not self.console_text.isVisible():
-                    self.statusbar.showMessage(stdout, 2000)
+        self.console_dock.show()
+        command = ['src/akniga_parser.py', '-db', self.connection_string]
 
-        def on_stdout():
-            print_message(self.update_process.readAllStandardOutput())
+        settings = QSettings(config_file_name, QSettings.IniFormat)
 
-        def on_stderr():
-            print_message(self.update_process.readAllStandardError())
+        start = settings.value('DatabaseUpdate/start-page', type=int, defaultValue=0)
+        stop = settings.value('DatabaseUpdate/stop-page', type=int, defaultValue=0)
+        if start:
+            command += ['--start-page', str(start)]
+        if stop:
+            command += ['--stop-page', str(stop)]
+        if settings.value('DatabaseUpdate/full-scan', defaultValue=0, type=int) == 2:
+            command += ['--full-scan']
+        if settings.value('DatabaseUpdate/update', defaultValue=0, type=int) == 2:
+            command += ['--update']
+        if settings.value('DatabaseUpdate/genres', defaultValue=2, type=int) == 2:
+            command += ['-genres']
 
-        def on_finished():
-            self.update_process = None
-            self.db_stop_update_action.setEnabled(False)
+        self.console_tab.start_process(command)
 
-        if self.connection_string and self.session and not self.update_process:
-            self.db_stop_update_action.setEnabled(True)
-            self.console_dock.show()
-            self.update_process = QProcess()
-            self.update_process.readyReadStandardOutput.connect(on_stdout)
-            self.update_process.readyReadStandardError.connect(on_stderr)
-            self.update_process.finished.connect(on_finished)
-            try:
-                command = ['akniga_parser.py', '-db', self.connection_string, '-g']
-                self.update_process.start("python", command)
-            except Exception as error:
-                self.console_text.append(f"{error}")
+    def on_request_to_start_process(self, command):
+        self.console_dock.show()
+        self.console_tab.start_process(command)
 
     def on_settings(self):
-        print('on_settings')
         dlg = SettingsDialog()
         dlg.exec()
-
-    def on_db_stop_update(self):
-        self.db_stop_update_action.setEnabled(False)
-        if not self.update_process is None:
-            self.update_process.kill()
-            message = 'the update has been terminated'
-            self.console_text.append(message)
-            logger.warning(message)
-            self.console_text.moveCursor(QTextCursor.End)
 
     def on_filter_check_uncheck(self, checked_item):
         self.get_data()

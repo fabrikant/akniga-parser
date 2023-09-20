@@ -36,7 +36,7 @@ class SettingsDialog(QDialog):
                                                                  defaultValue=DOWNLOAD_REQUESTS))
 
         self.books_naming_method.setCurrentText(settings.value('DownloadBooks/naming', type=str,
-                                                                 defaultValue=NAMING_ID))
+                                                                 defaultValue=NAMING_DEEP))
 
     def write_settings(self):
         settings = QSettings(config_file_name, QSettings.IniFormat)

@@ -1,15 +1,23 @@
 from PyQt5.QtWidgets import *
 from table_model import BooksTableModel
 from PyQt5.QtGui import QIntValidator, QIcon
+from PyQt5.QtCore import QSettings
 import webbrowser
+from akniga_global import config_file_name, NAMING_ID, DOWNLOAD_REQUESTS
 
 
 class TableBooks(QTableView):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.addAction(QAction(QIcon("../ui/img/open_in_browser.png"), 'Перейти на страницу книги', self, triggered=self.open_url))
-        self.addAction(QAction(QIcon("../ui/img/content_copy.png"), 'Скопировать url в буфер', self, triggered=self.copy_url))
+        self.addAction(
+            QAction(QIcon("ui/img/open_in_browser.png"), 'Перейти на страницу книги', self,
+                    triggered=self.open_url))
+        self.addAction(
+            QAction(QIcon("ui/img/content_copy.png"), 'Скопировать url в буфер', self,
+                    triggered=self.copy_url))
+        self.addAction(
+            QAction(QIcon("ui/img/download.png"), 'Скачать', self, triggered=self.download_book))
 
 
     def on_get_data(self, db_books, main_window, clipboard):
@@ -50,6 +58,22 @@ class TableBooks(QTableView):
         url = self.get_current_url()
         if url:
             self.clipboard.setText(url)
+
+    def download_book(self):
+        url = self.get_current_url()
+        if not url:
+            return
+        settings = QSettings(config_file_name, QSettings.IniFormat)
+
+        command = ['src/akniga_dl.py', '--download-method',
+                   settings.value('DownloadBooks/download-method', type=str, defaultValue=DOWNLOAD_REQUESTS),
+                   '--naming', settings.value('DownloadBooks/naming', type=str,defaultValue=NAMING_ID)]
+        output = settings.value('DownloadBooks/output', type=str)
+        if output == '':
+            output = '.'
+
+        command += [url, output]
+        self.start_process_slot(command)
 
     def set_columns_width(self, max_width):
         for num_col in range(self.model().columnCount(None)):
