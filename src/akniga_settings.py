@@ -8,7 +8,7 @@ class SettingsDialog(QDialog):
 
     def __init__(self):
         super(SettingsDialog, self).__init__()
-        uic.loadUi('ui/settings.ui', self)
+        uic.loadUi('./ui/settings.ui', self)
 
         self.books_download_method.addItem(DOWNLOAD_REQUESTS)
         self.books_download_method.addItem(DOWNLOAD_FFMPEG)

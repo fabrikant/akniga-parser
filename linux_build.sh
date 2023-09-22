@@ -5,7 +5,6 @@ source .venv/bin/activate
 pip install -r requirement.txt
 pip install pyinstaller
 pyinstaller -y --name akniga-parser --add-data ui/:ui/ --add-data src/:. --add-data src/:src/ \
---icon ui/img/book_white_background.png \
 --collect-submodules brotli \
 --collect-submodules logging \
 --collect-submodules webbrowser \
@@ -15,5 +14,6 @@ pyinstaller -y --name akniga-parser --add-data ui/:ui/ --add-data src/:. --add-d
 --collect-submodules sqlalchemy \
 --collect-submodules m3u8 \
 --collect-submodules tqdm \
+--collect-submodules re \
 src/akniga_viewer.py
 

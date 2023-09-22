@@ -7,12 +7,12 @@ class ConsoleTabItem(QWidget):
 
     def __init__(self, parent, command):
         super().__init__(parent)
-        uic.loadUi('ui/console_item.ui', self)
+        uic.loadUi('./ui/console_item.ui', self)
         self.str_command = ''.join(command)
         self.process = QProcess()
-        # self.process.readyReadStandardOutput.connect(self.on_stdout)
-        # self.process.readyReadStandardError.connect(self.on_stderr)
-        # self.process.finished.connect(self.on_finished)
+        self.process.readyReadStandardOutput.connect(self.on_stdout)
+        self.process.readyReadStandardError.connect(self.on_stderr)
+        self.process.finished.connect(self.on_finished)
         try:
             self.process.start("python", command)
         except Exception as error:

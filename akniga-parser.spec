@@ -11,6 +11,7 @@ hiddenimports += collect_submodules('BeautifulSoup')
 hiddenimports += collect_submodules('sqlalchemy')
 hiddenimports += collect_submodules('m3u8')
 hiddenimports += collect_submodules('tqdm')
+hiddenimports += collect_submodules('re')
 
 
 block_cipher = None
@@ -49,7 +50,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['ui/img/book_white_background.png'],
 )
 coll = COLLECT(
     exe,
