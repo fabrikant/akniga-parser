@@ -39,7 +39,8 @@ class ConsoleTabItem(QWidget):
             self.console_text.append(f"{error}")
 
     def print_message(self, data):
-        stdout = bytes(data).decode("utf8")
+        stdout = bytes(data).decode("utf8", errors='replace')
+        # stdout = unicode(bytes(data),
         if not "" == stdout:
             self.console_text.moveCursor(QTextCursor.End)
             self.console_text.insertPlainText(stdout)
