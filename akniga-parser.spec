@@ -13,7 +13,7 @@ a = Analysis(
     ['src/akniga_viewer.py'],
     pathex=[],
     binaries=[],
-    datas=[('./ui', './ui'), ('src/', '.')],
+    datas=[('./ui', './ui'), ('src/', '.'), ('src/', 'src/')],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
