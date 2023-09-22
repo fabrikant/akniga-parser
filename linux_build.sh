@@ -6,7 +6,6 @@ pip install -r requirement.txt
 pip install pyinstaller
 
 pyinstaller -y -F \
---add-data akniga_sql.py:. \
 --collect-submodules logging \
 --collect-submodules requests \
 --collect-all BeautifulSoup \
@@ -15,8 +14,6 @@ pyinstaller -y -F \
 akniga_parser.py
 
 pyinstaller -y -F \
---add-data akniga_global.py:. \
---add-data akniga_parser.py:. \
 --collect-submodules brotli \
 --collect-submodules pathvalidate \
 --collect-submodules logging \
@@ -26,16 +23,13 @@ pyinstaller -y -F \
 --collect-submodules m3u8 \
 --collect-submodules tqdm \
 --collect-all akniga_global \
---collect-all  akniga_parser \
+--collect-all akniga_parser \
 akniga_dl.py
 
 pyinstaller -y -F --add-data ui/:ui/ \
 --add-binary dist/akniga_parser:. \
 --add-binary dist/akniga_dl:. \
---add-data akniga_global.py:. \
 --add-data akniga_settings.py:. \
---add-data akniga_sql.py:. \
---add-data akniga_viewer.py:. \
 --add-data console_tab.py:. \
 --add-data table_books.py:. \
 --add-data table_model.py:. \

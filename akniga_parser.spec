@@ -2,7 +2,7 @@
 from PyInstaller.utils.hooks import collect_submodules
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('akniga_sql.py', '.')]
+datas = []
 binaries = []
 hiddenimports = []
 hiddenimports += collect_submodules('logging')

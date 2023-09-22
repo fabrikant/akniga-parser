@@ -2,7 +2,7 @@
 from PyInstaller.utils.hooks import collect_submodules
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('ui/', 'ui/'), ('akniga_global.py', '.'), ('akniga_settings.py', '.'), ('akniga_sql.py', '.'), ('akniga_viewer.py', '.'), ('console_tab.py', '.'), ('table_books.py', '.'), ('table_model.py', '.'), ('time_slider.py', '.')]
+datas = [('ui/', 'ui/'), ('akniga_settings.py', '.'), ('console_tab.py', '.'), ('table_books.py', '.'), ('table_model.py', '.'), ('time_slider.py', '.')]
 binaries = [('dist/akniga_parser.exe', '.'), ('dist/akniga_dl.exe', '.')]
 hiddenimports = []
 hiddenimports += collect_submodules('brotli')
