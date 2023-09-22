@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        uic.loadUi('ui/main.ui', self)
+        uic.loadUi('./ui/main.ui', self)
         self.config_file_name = config_file_name
         self.read_settings()
         self.session = None

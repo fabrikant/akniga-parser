@@ -2,8 +2,15 @@
 from PyInstaller.utils.hooks import collect_submodules
 
 hiddenimports = []
+hiddenimports += collect_submodules('brotli')
+hiddenimports += collect_submodules('logging')
 hiddenimports += collect_submodules('webbrowser')
 hiddenimports += collect_submodules('superqt')
+hiddenimports += collect_submodules('requests')
+hiddenimports += collect_submodules('BeautifulSoup')
+hiddenimports += collect_submodules('sqlalchemy')
+hiddenimports += collect_submodules('m3u8')
+hiddenimports += collect_submodules('tqdm')
 
 
 block_cipher = None
@@ -13,7 +20,7 @@ a = Analysis(
     ['src/akniga_viewer.py'],
     pathex=[],
     binaries=[],
-    datas=[('./ui', './ui'), ('src/', '.'), ('src/', 'src/')],
+    datas=[('ui/', 'ui/'), ('src/', '.'), ('src/', 'src/')],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
@@ -42,6 +49,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['ui/img/book_white_background.png'],
 )
 coll = COLLECT(
     exe,
