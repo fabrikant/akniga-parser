@@ -1,24 +1,40 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5.QtCore import QProcess
+from PyQt5.QtCore import QProcess, QProcessEnvironment
 from PyQt5.QtGui import QTextCursor
 from pathlib import Path
 
 class ConsoleTabItem(QWidget):
 
-    def __init__(self, parent, command):
+    def __init__(self, parent, command, str_command):
         super().__init__(parent)
-        print(command)
         uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('console_item.ui'), self)
-        self.str_command = ''.join(command)
+        self.str_command = str_command
+        system_env = QProcessEnvironment.systemEnvironment()
         self.process = QProcess()
+        self.process.setProcessEnvironment(system_env)
         self.process.readyReadStandardOutput.connect(self.on_stdout)
         self.process.readyReadStandardError.connect(self.on_stderr)
         self.process.finished.connect(self.on_finished)
+
+        command_path = command[0]
+        if command_path.is_file():
+            programm = str(command_path)
+            arguments = command[1:]
+        elif command_path.with_suffix('.exe').is_file():
+            programm = str(command_path.with_suffix('.exe'))
+            arguments = command[1:]
+        elif command_path.with_suffix('.py').is_file():
+            programm = 'python'
+            arguments = [str(command_path.with_suffix('.py'))] + command[1:]
+        else:
+            programm = 'echo'
+            arguments = [f'Не найден исполняемый файл {str(command_path)}']
+
+        print(programm)
+        print(arguments)
         try:
-            print('start')
-            self.process.start("python", command)
-            print('after start')
+            self.process.start(programm, arguments)
         except Exception as error:
             self.console_text.append(f"{error}")
 
@@ -56,17 +72,20 @@ class ConsoleTab(QTabWidget):
 
         index = self.find_item_by_command(command)
         if index is None:
-            tab_text = command[0]
+            tab_text = str(command[0])
             if 'akniga_parser' in tab_text:
                 tab_text = 'db update'
             elif 'akniga_dl' in tab_text:
                 tab_text = command[-2].strip('/').split('/')[-1]
-            self.setCurrentIndex(self.addTab(ConsoleTabItem(self, command), tab_text))
+            self.setCurrentIndex(self.addTab(ConsoleTabItem(self, command, self.command_to_str(command)), tab_text))
         else:
             self.setCurrentIndex(index)
 
+    def command_to_str(self, command):
+        return f'{command[0]} {"".join(command[1:])}'
+
     def find_item_by_command(self, command):
-        str_command = ''.join(command)
+        str_command = self.command_to_str(command)
         for index in range(self.count()):
             item = self.widget(index)
             if item.str_command == str_command:

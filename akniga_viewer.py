@@ -76,8 +76,8 @@ class MainWindow(QMainWindow):
 
     def on_db_update(self):
         self.console_dock.show()
-        script_path = Path(__file__).parent.joinpath('akniga_parser.py')
-        command = [str(script_path), '-db', self.connection_string]
+        script_path = Path(__file__).parent.joinpath('akniga_parser')
+        command = [script_path, '-db', self.connection_string]
 
         settings = QSettings(config_file_name, QSettings.IniFormat)
 

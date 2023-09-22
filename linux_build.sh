@@ -4,7 +4,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirement.txt
 pip install pyinstaller
-pyinstaller -y --name akniga-parser --add-data ui/:ui/ \
+pyinstaller -y -F --add-data ui/:ui/ \
 --add-data akniga_dl.py:. \
 --add-data akniga_global.py:. \
 --add-data akniga_parser.py:. \
@@ -34,3 +34,27 @@ pyinstaller -y --name akniga-parser --add-data ui/:ui/ \
 --collect-all table_model \
 --collect-all time_slider \
 akniga_viewer.py
+
+pyinstaller -y -F \
+--add-data akniga_sql.py:. \
+--collect-all brotli \
+--collect-all logging \
+--collect-all requests \
+--collect-all BeautifulSoup \
+--collect-all sqlalchemy \
+--collect-all akniga_sql \
+akniga_parser.py
+
+pyinstaller -y -F \
+--add-data akniga_global.py:. \
+--add-data akniga_parser.py:. \
+--collect-all brotli \
+--collect-all logging \
+--collect-all webbrowser \
+--collect-all requests \
+--collect-all BeautifulSoup \
+--collect-all m3u8 \
+--collect-all tqdm \
+--collect-all akniga_global \
+--collect-all  akniga_parser \
+akniga_dl.py
