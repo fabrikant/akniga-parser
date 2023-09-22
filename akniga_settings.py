@@ -2,13 +2,14 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QSettings
 from PyQt5 import uic
 from PyQt5.QtGui import QIntValidator
+from pathlib import Path
 from akniga_global import config_file_name, NAMING_DEEP, NAMING_WIDE, NAMING_ID, DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG
 
 class SettingsDialog(QDialog):
 
     def __init__(self):
         super(SettingsDialog, self).__init__()
-        uic.loadUi('./ui/settings.ui', self)
+        uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('settings.ui'), self)
 
         self.books_download_method.addItem(DOWNLOAD_REQUESTS)
         self.books_download_method.addItem(DOWNLOAD_FFMPEG)

@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from table_model import BooksTableModel
 from PyQt5.QtGui import QIntValidator, QIcon
 from PyQt5.QtCore import QSettings
+from pathlib import Path
 import webbrowser
 from akniga_global import config_file_name, NAMING_ID, DOWNLOAD_REQUESTS
 
@@ -65,8 +66,8 @@ class TableBooks(QTableView):
         if not url:
             return
         settings = QSettings(config_file_name, QSettings.IniFormat)
-
-        command = ['src/akniga_dl.py', '--download-method',
+        script_path = Path(__file__).parent.joinpath('akniga_dl.py')
+        command = [str(script_path), '--download-method',
                    settings.value('DownloadBooks/download-method', type=str, defaultValue=DOWNLOAD_REQUESTS),
                    '--naming', settings.value('DownloadBooks/naming', type=str,defaultValue=NAMING_ID)]
         output = settings.value('DownloadBooks/output', type=str)

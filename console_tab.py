@@ -2,19 +2,23 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import QProcess
 from PyQt5.QtGui import QTextCursor
+from pathlib import Path
 
 class ConsoleTabItem(QWidget):
 
     def __init__(self, parent, command):
         super().__init__(parent)
-        uic.loadUi('./ui/console_item.ui', self)
+        print(command)
+        uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('console_item.ui'), self)
         self.str_command = ''.join(command)
         self.process = QProcess()
         self.process.readyReadStandardOutput.connect(self.on_stdout)
         self.process.readyReadStandardError.connect(self.on_stderr)
         self.process.finished.connect(self.on_finished)
         try:
+            print('start')
             self.process.start("python", command)
+            print('after start')
         except Exception as error:
             self.console_text.append(f"{error}")
 

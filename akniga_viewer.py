@@ -1,5 +1,6 @@
 import sys
 import os
+from pathlib import Path
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
 from PyQt5.QtCore import QSettings
@@ -25,7 +26,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        uic.loadUi('./ui/main.ui', self)
+        uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('main.ui'), self)
         self.config_file_name = config_file_name
         self.read_settings()
         self.session = None
@@ -75,7 +76,8 @@ class MainWindow(QMainWindow):
 
     def on_db_update(self):
         self.console_dock.show()
-        command = ['src/akniga_parser.py', '-db', self.connection_string]
+        script_path = Path(__file__).parent.joinpath('akniga_parser.py')
+        command = [str(script_path), '-db', self.connection_string]
 
         settings = QSettings(config_file_name, QSettings.IniFormat)
 

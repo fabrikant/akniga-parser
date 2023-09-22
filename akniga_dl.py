@@ -315,7 +315,7 @@ def parse_series(series_url, output_folder, download_method=download_book_by_m3u
 
 if __name__ == '__main__':
     logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.WARNING
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
     )
     parser = argparse.ArgumentParser(description='Загрузчик книг с сайта akniga.org')
     parser.add_argument('-d','--download-method', default=DOWNLOAD_REQUESTS,

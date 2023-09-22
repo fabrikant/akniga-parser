@@ -526,7 +526,7 @@
   <customwidget>
    <class>TimeSlider</class>
    <extends>QSlider</extends>
-   <header location="global">time_slider</header>
+   <header>time_slider</header>
    <slots>
     <signal>valueChanged()</signal>
    </slots>
@@ -534,12 +534,12 @@
   <customwidget>
    <class>TableBooks</class>
    <extends>QTableView</extends>
-   <header location="global">table_books</header>
+   <header>table_books</header>
   </customwidget>
   <customwidget>
    <class>ConsoleTab</class>
    <extends>QTabWidget</extends>
-   <header location="global">console_tab</header>
+   <header>console_tab</header>
    <container>1</container>
    <slots>
     <slot>on_close_tab_request()</slot>
