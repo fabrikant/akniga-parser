@@ -1,24 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_submodules
-from PyInstaller.utils.hooks import collect_all
 
-datas = []
-binaries = []
 hiddenimports = []
 hiddenimports += collect_submodules('brotli')
 hiddenimports += collect_submodules('pathvalidate')
 hiddenimports += collect_submodules('logging')
+hiddenimports += collect_submodules('webbrowser')
 hiddenimports += collect_submodules('requests')
+hiddenimports += collect_submodules('BeautifulSoup')
 hiddenimports += collect_submodules('m3u8')
 hiddenimports += collect_submodules('tqdm')
-tmp_ret = collect_all('webbrowser')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-tmp_ret = collect_all('BeautifulSoup')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-tmp_ret = collect_all('akniga_global')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-tmp_ret = collect_all('akniga_parser')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
+hiddenimports += collect_submodules('akniga_global')
+hiddenimports += collect_submodules('akniga_parser')
 
 
 block_cipher = None
@@ -27,8 +20,8 @@ block_cipher = None
 a = Analysis(
     ['akniga_dl.py'],
     pathex=[],
-    binaries=binaries,
-    datas=datas,
+    binaries=[],
+    datas=[],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},

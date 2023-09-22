@@ -1,17 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_submodules
-from PyInstaller.utils.hooks import collect_all
 
-datas = []
-binaries = []
 hiddenimports = []
 hiddenimports += collect_submodules('logging')
 hiddenimports += collect_submodules('requests')
+hiddenimports += collect_submodules('BeautifulSoup')
+hiddenimports += collect_submodules('sqlalchemy')
 hiddenimports += collect_submodules('akniga_sql')
-tmp_ret = collect_all('BeautifulSoup')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
-tmp_ret = collect_all('sqlalchemy')
-datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 block_cipher = None
@@ -20,8 +15,8 @@ block_cipher = None
 a = Analysis(
     ['akniga_parser.py'],
     pathex=[],
-    binaries=binaries,
-    datas=datas,
+    binaries=[],
+    datas=[],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},

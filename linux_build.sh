@@ -8,8 +8,8 @@ pip install pyinstaller
 pyinstaller -y -F \
 --collect-submodules logging \
 --collect-submodules requests \
---collect-all BeautifulSoup \
---collect-all sqlalchemy \
+--collect-submodules BeautifulSoup \
+--collect-submodules sqlalchemy \
 --collect-submodules akniga_sql \
 akniga_parser.py
 
@@ -17,13 +17,13 @@ pyinstaller -y -F \
 --collect-submodules brotli \
 --collect-submodules pathvalidate \
 --collect-submodules logging \
---collect-all webbrowser \
+--collect-submodules webbrowser \
 --collect-submodules requests \
---collect-all BeautifulSoup \
+--collect-submodules BeautifulSoup \
 --collect-submodules m3u8 \
 --collect-submodules tqdm \
---collect-all akniga_global \
---collect-all akniga_parser \
+--collect-submodules akniga_global \
+--collect-submodules akniga_parser \
 akniga_dl.py
 
 pyinstaller -y -F --add-data ui/:ui/ \
@@ -36,11 +36,11 @@ pyinstaller -y -F --add-data ui/:ui/ \
 --add-data time_slider.py:. \
 --collect-submodules brotli \
 --collect-submodules logging \
---collect-all webbrowser \
---collect-all superqt \
+--collect-submodules webbrowser \
+--collect-submodules superqt \
 --collect-submodules requests \
---collect-all BeautifulSoup \
---collect-all sqlalchemy \
+--collect-submodules BeautifulSoup \
+--collect-submodules sqlalchemy \
 --collect-submodules akniga_global \
 --collect-submodules  akniga_settings \
 --collect-submodules akniga_sql \
