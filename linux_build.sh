@@ -7,24 +7,24 @@ pip install pyinstaller
 
 pyinstaller -y -F \
 --add-data akniga_sql.py:. \
---collect-all brotli \
---collect-all logging \
---collect-all requests \
+--collect-submodules logging \
+--collect-submodules requests \
 --collect-all BeautifulSoup \
 --collect-all sqlalchemy \
---collect-all akniga_sql \
+--collect-submodules akniga_sql \
 akniga_parser.py
 
 pyinstaller -y -F \
 --add-data akniga_global.py:. \
 --add-data akniga_parser.py:. \
---collect-all brotli \
---collect-all logging \
+--collect-submodules brotli \
+--collect-submodules pathvalidate \
+--collect-submodules logging \
 --collect-all webbrowser \
---collect-all requests \
+--collect-submodules requests \
 --collect-all BeautifulSoup \
---collect-all m3u8 \
---collect-all tqdm \
+--collect-submodules m3u8 \
+--collect-submodules tqdm \
 --collect-all akniga_global \
 --collect-all  akniga_parser \
 akniga_dl.py
@@ -40,22 +40,20 @@ pyinstaller -y -F --add-data ui/:ui/ \
 --add-data table_books.py:. \
 --add-data table_model.py:. \
 --add-data time_slider.py:. \
---collect-all brotli \
---collect-all logging \
+--collect-submodules brotli \
+--collect-submodules logging \
 --collect-all webbrowser \
 --collect-all superqt \
---collect-all requests \
+--collect-submodules requests \
 --collect-all BeautifulSoup \
 --collect-all sqlalchemy \
---collect-all m3u8 \
---collect-all tqdm \
---collect-all akniga_global \
---collect-all  akniga_settings \
---collect-all akniga_sql \
---collect-all console_tab \
---collect-all table_books \
---collect-all table_model \
---collect-all time_slider \
+--collect-submodules akniga_global \
+--collect-submodules  akniga_settings \
+--collect-submodules akniga_sql \
+--collect-submodules console_tab \
+--collect-submodules table_books \
+--collect-submodules table_model \
+--collect-submodules time_slider \
 akniga_viewer.py
 
 sed -i 's/dist\/akniga_parser/dist\/akniga_parser.exe/' akniga_viewer.spec

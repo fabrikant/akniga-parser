@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>img/book.png</normaloff>img/book.png</iconset>
+    <normaloff>img/book_white_background.png</normaloff>img/book_white_background.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
