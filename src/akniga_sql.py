@@ -1,8 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Float, create_engine, ForeignKey
 from sqlalchemy.orm import Session, declarative_base, relationship
-from sqlalchemy.sql import text
 import logging
-import akniga_sql_requests
 
 logger = logging.getLogger()
 Base = declarative_base()
@@ -122,8 +120,6 @@ class Book(Base):
 def create_database(connection_string):
     engine = create_engine(connection_string, echo=True)
     Base.metadata.create_all(engine)
-    for sql_req in akniga_sql_requests.get_on_base_create_requests():
-        get_session(connection_string).execute(text(sql_req))
 
 
 def get_session(connection_string):
