@@ -57,3 +57,6 @@ pyinstaller -y -F --add-data ui/:ui/ \
 --collect-all table_model \
 --collect-all time_slider \
 akniga_viewer.py
+
+sed -i 's/dist\/akniga_parser/dist\/akniga_parser.exe/' akniga_viewer.spec
+sed -i 's/dist\/akniga_dl/dist\/akniga_dl.exe/' akniga_viewer.spec
