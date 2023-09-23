@@ -3,11 +3,10 @@ import os
 from pathlib import Path
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
-from PyQt5.QtCore import QSettings
 from PyQt5.Qt import QStandardItemModel, QStandardItem
 import akniga_sql as sql
 from akniga_settings import SettingsDialog
-from akniga_global import config_file_name
+from akniga_global import settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -27,7 +26,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('main.ui'), self)
-        self.config_file_name = config_file_name
         self.read_settings()
         self.session = None
         self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
@@ -36,13 +34,19 @@ class MainWindow(QMainWindow):
         self.table_books.start_process_slot = self.on_request_to_start_process
         self.console_tab.console_dock = self.console_dock
 
+    def closeEvent(self, event):
+        self.write_settings()
+        event.accept()
+
     def read_settings(self):
-        settings = QSettings(self.config_file_name, QSettings.IniFormat)
         self.connection_string = settings.value('connection_string')
+        key = 'aknniga_viewer/geom'
+        if settings.contains(key):
+            self.setGeometry(settings.value(key))
 
     def write_settings(self):
-        settings = QSettings(self.config_file_name, QSettings.IniFormat)
         settings.setValue('connection_string', self.connection_string)
+        settings.setValue('aknniga_viewer/pos', self.pos())
 
     def open_database(self):
         self.setWindowTitle('akniga db viewer')
@@ -75,10 +79,12 @@ class MainWindow(QMainWindow):
             self.write_settings()
 
     def on_db_update(self):
-        settings = QSettings(config_file_name, QSettings.IniFormat)
         script_path = settings.value('Applications/parser', type=str)
+        if not self.connection_string:
+            QMessageBox.warning(self, 'Ошибка!', 'Не выбрана база данных!', )
+            return
         if script_path.strip() == '':
-            QMessageBox.warning('Не выбран парсер.')
+            QMessageBox.warning(self, 'Ошибка!','Не выбран парсер!', )
             return
         command = [script_path, '-db', self.connection_string]
 

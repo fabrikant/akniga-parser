@@ -1,10 +1,9 @@
 from PyQt5.QtWidgets import *
 from table_model import BooksTableModel
 from PyQt5.QtGui import QIntValidator, QIcon
-from PyQt5.QtCore import QSettings
 from pathlib import Path
 import webbrowser
-from akniga_global import config_file_name, NAMING_ID, DOWNLOAD_REQUESTS
+from akniga_global import NAMING_ID, DOWNLOAD_REQUESTS, settings
 
 
 class TableBooks(QTableView):
@@ -66,7 +65,6 @@ class TableBooks(QTableView):
         url = self.get_current_url()
         if not url:
             return
-        settings = QSettings(config_file_name, QSettings.IniFormat)
         script_path = settings.value('Applications/downloader', type=str)
         if script_path.strip() == '':
             QMessageBox.warning('Не выбран загрузчик.')

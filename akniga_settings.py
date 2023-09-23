@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QSettings
 from PyQt5 import uic
 from PyQt5.QtGui import QIntValidator
 from pathlib import Path
-from akniga_global import config_file_name, NAMING_DEEP, NAMING_WIDE, NAMING_ID, DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG
+from akniga_global import NAMING_DEEP, NAMING_WIDE, NAMING_ID, DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG, settings
+
 
 class SettingsDialog(QDialog):
 
@@ -23,7 +23,6 @@ class SettingsDialog(QDialog):
         self.read_settings()
 
     def read_settings(self):
-        settings = QSettings(config_file_name, QSettings.IniFormat)
 
         self.connection_string.setText(settings.value('connection_string', type=str))
         self.page_start.setText(str(settings.value('DatabaseUpdate/start-page', type=int)))
@@ -44,7 +43,6 @@ class SettingsDialog(QDialog):
 
 
     def write_settings(self):
-        settings = QSettings(config_file_name, QSettings.IniFormat)
         settings.setValue('connection_string', self.connection_string.text())
 
         settings.setValue('DatabaseUpdate/start-page', int(f'0{self.page_start.text()}'))

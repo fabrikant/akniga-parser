@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_PATH=$(dirname $0)
+cd $SCRIPT_PATH
+
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirement.txt
@@ -28,7 +31,8 @@ pyinstaller -y \
 --collect-submodules akniga_global \
 akniga_dl.py
 
-pyinstaller -y --add-data ui/:ui/ \
+pyinstaller -y -i ui/img/book.ico \
+--add-data ui/:ui/ \
 --add-data akniga_settings.py:. \
 --add-data console_tab.py:. \
 --add-data table_books.py:. \

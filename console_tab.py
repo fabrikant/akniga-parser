@@ -3,11 +3,14 @@ from PyQt5 import uic
 from PyQt5.QtCore import QProcess, QProcessEnvironment
 from PyQt5.QtGui import QTextCursor
 from pathlib import Path
+import PyQt5
+import os
 
 class ConsoleTabItem(QWidget):
 
     def __init__(self, parent, command, str_command):
         super().__init__(parent)
+        self.setAttribute(PyQt5.QtCore.Qt.WidgetAttribute.WA_DeleteOnClose)
         uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('console_item.ui'), self)
         self.str_command = str_command
         self.process = QProcess()
@@ -15,31 +18,17 @@ class ConsoleTabItem(QWidget):
         self.process.readyReadStandardOutput.connect(self.on_stdout)
         self.process.readyReadStandardError.connect(self.on_stderr)
         self.process.finished.connect(self.on_finished)
-
-        # command_path = command[0]
-        # if command_path.is_file():
-        #     programm = str(command_path)
-        #     arguments = command[1:]
-        # elif command_path.with_suffix('.exe').is_file():
-        #     programm = str(command_path.with_suffix('.exe'))
-        #     arguments = command[1:]
-        # elif command_path.with_suffix('.py').is_file():
-        #     programm = 'python'
-        #     arguments = [str(command_path.with_suffix('.py'))] + command[1:]
-        # else:
-        #     programm = 'echo'
-        #     arguments = [f'Не найден исполняемый файл {str(command_path)}']
-        #
-        # print(programm)
-        # print(arguments)
         try:
             self.process.start(command[0], command[1:])
         except Exception as error:
             self.console_text.append(f"{error}")
 
     def print_message(self, data):
-        stdout = bytes(data).decode("utf8", errors='replace')
-        # stdout = unicode(bytes(data),
+        if 'nt' in os.name:
+            os_code = 'CP-1251'
+        else:
+            os_code = 'utf-8'
+        stdout = bytes(data).decode(os_code, errors='replace')
         if not "" == stdout:
             self.console_text.moveCursor(QTextCursor.End)
             self.console_text.insertPlainText(stdout)
@@ -92,11 +81,11 @@ class ConsoleTab(QTabWidget):
         return None
 
     def on_close_tab_request(self, index):
-        self.removeTab(index)
         item = self.widget(index)
         if item:
             item.stop_process()
             item.close()
+        self.removeTab(index)
         if not self.console_dock is None:
             if not self.count():
                 self.console_dock.close()
