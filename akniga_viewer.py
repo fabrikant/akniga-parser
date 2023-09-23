@@ -10,7 +10,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class FilterItem(QStandardItem):
     def __init__(self, db_object=None, checkable=False):
         super().__init__()
@@ -30,6 +29,9 @@ class MainWindow(QMainWindow):
         self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
         self.open_database()
         self.console_dock.hide()
+        self.table_books.addAction(self.go_to_url)
+        self.table_books.addAction(self.copy_url)
+        self.table_books.addAction(self.download_book)
         self.table_books.start_process_slot = self.on_request_to_start_process
         self.console_tab.console_dock = self.console_dock
 

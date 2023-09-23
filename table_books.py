@@ -6,20 +6,10 @@ import webbrowser
 from akniga_dl import NAMING_ID, DOWNLOAD_REQUESTS
 from akniga_settings import settings
 
-
 class TableBooks(QTableView):
 
     def __init__(self, parent):
         super().__init__(parent)
-        img_path = Path(__file__).parent.joinpath('ui').joinpath('img')
-        self.addAction(
-            QAction(QIcon(str(img_path.joinpath("open_in_browser.png"))), 'Перейти на страницу книги', self,
-                    triggered=self.open_url))
-        self.addAction(
-            QAction(QIcon(str(img_path.joinpath("content_copy.png"))), 'Скопировать url в буфер', self,
-                    triggered=self.copy_url))
-        self.addAction(
-            QAction(QIcon(str(img_path.joinpath("download.png"))), 'Скачать', self, triggered=self.download_book))
         # Сюда передается функция для запуска процесса скачивания
         self.start_process_slot = None
 

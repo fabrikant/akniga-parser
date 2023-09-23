@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1102</width>
+    <width>1308</width>
     <height>792</height>
    </rect>
   </property>
@@ -161,7 +161,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1102</width>
+     <width>1308</width>
      <height>22</height>
     </rect>
    </property>
@@ -184,10 +184,28 @@
     <addaction name="filter_doc_action"/>
     <addaction name="console_doc_action"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Книга</string>
+    </property>
+    <addaction name="go_to_url"/>
+    <addaction name="copy_url"/>
+    <addaction name="download_book"/>
+   </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_tools"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QDockWidget" name="filter_dock">
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllDockWidgetAreas</set>
+   </property>
+   <property name="windowTitle">
+    <string>Панель фильтров</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -428,6 +446,9 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
+   <property name="windowTitle">
+    <string>Консоль</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
@@ -448,6 +469,54 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QToolBar" name="tool_bar_file">
+   <property name="windowTitle">
+    <string>Файл</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonFollowStyle</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="db_connect_action"/>
+   <addaction name="db_create_action"/>
+   <addaction name="db_update_action"/>
+   <addaction name="settings"/>
+  </widget>
+  <widget class="QToolBar" name="tool_bar_tools">
+   <property name="windowTitle">
+    <string>Инструменты</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="filter_doc_action"/>
+   <addaction name="console_doc_action"/>
+  </widget>
+  <widget class="QToolBar" name="tool_bar_books">
+   <property name="windowTitle">
+    <string>Книга</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="go_to_url"/>
+   <addaction name="copy_url"/>
+   <addaction name="download_book"/>
   </widget>
   <action name="db_connect_action">
    <property name="icon">
@@ -471,6 +540,9 @@
    </property>
    <property name="text">
     <string>Панель фильтров</string>
+   </property>
+   <property name="toolTip">
+    <string>Показать/Скрыть фильтры</string>
    </property>
   </action>
   <action name="exit_action">
@@ -511,6 +583,9 @@
    <property name="text">
     <string>Консоль</string>
    </property>
+   <property name="toolTip">
+    <string>Показать/Срыть консоль</string>
+   </property>
   </action>
   <action name="settings">
    <property name="icon">
@@ -519,6 +594,39 @@
    </property>
    <property name="text">
     <string>Настройки</string>
+   </property>
+   <property name="toolTip">
+    <string>Открыть настройки</string>
+   </property>
+  </action>
+  <action name="go_to_url">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/open_in_browser.png</normaloff>img/open_in_browser.png</iconset>
+   </property>
+   <property name="text">
+    <string>Перейти на страницу книги</string>
+   </property>
+  </action>
+  <action name="copy_url">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/content_copy.png</normaloff>img/content_copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Скопировать url в буфер</string>
+   </property>
+  </action>
+  <action name="download_book">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/download.png</normaloff>img/download.png</iconset>
+   </property>
+   <property name="text">
+    <string>Скачать книгу</string>
+   </property>
+   <property name="toolTip">
+    <string>Скачать книгу</string>
    </property>
   </action>
  </widget>
@@ -535,6 +643,11 @@
    <class>TableBooks</class>
    <extends>QTableView</extends>
    <header>table_books</header>
+   <slots>
+    <slot>open_url()</slot>
+    <slot>copy_url()</slot>
+    <slot>download_book()</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>ConsoleTab</class>
@@ -1002,6 +1115,70 @@
     <hint type="destinationlabel">
      <x>550</x>
      <y>758</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>go_to_url</sender>
+   <signal>triggered()</signal>
+   <receiver>table_books</receiver>
+   <slot>open_url()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>854</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>copy_url</sender>
+   <signal>triggered()</signal>
+   <receiver>table_books</receiver>
+   <slot>copy_url()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>854</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>download_book</sender>
+   <signal>triggered()</signal>
+   <receiver>table_books</receiver>
+   <slot>download_book()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>854</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>console_dock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>console_doc_action</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>653</x>
+     <y>771</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>
