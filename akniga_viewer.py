@@ -10,6 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class FilterItem(QStandardItem):
     def __init__(self, db_object=None, checkable=False):
         super().__init__()
@@ -84,7 +85,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Ошибка!', 'Не выбрана база данных!', )
             return
         if script_path.strip() == '':
-            QMessageBox.warning(self, 'Ошибка!','Не выбран парсер!', )
+            QMessageBox.warning(self, 'Ошибка!', 'Не выбран парсер!', )
             return
         command = [script_path, '-db', self.connection_string]
 
@@ -115,7 +116,7 @@ class MainWindow(QMainWindow):
         self.get_data()
 
     def on_filter_title_clear(self):
-       self.clear_text_filter(self.filter_title)
+        self.clear_text_filter(self.filter_title)
 
     def on_filter_author_clear(self):
         self.clear_text_filter(self.filter_author)
@@ -180,14 +181,14 @@ class MainWindow(QMainWindow):
 
     def on_table_book_dbl_click(self, model_index):
         dict = {'Название': self.filter_title,
-                   'Автор': self.filter_author,
-                   'Серия': self.filter_seria,
-                   'Исполнитель': self.filter_performer}
+                'Автор': self.filter_author,
+                'Серия': self.filter_seria,
+                'Исполнитель': self.filter_performer}
         model = self.table_books.model()
         value, column_name, _, _ = model.get_cell_information(model_index)
-        if not value is None:
+        if value is not None:
             filter_edit = dict[column_name]
-            if not filter_edit is None:
+            if filter_edit is not None:
                 filter_edit.setText(value)
                 self.get_data()
 
@@ -241,17 +242,17 @@ class MainWindow(QMainWindow):
 
         constraints_tree = self.constraints_tree
         constraints_tree.setHeaderHidden(True)
-        treeModel = QStandardItemModel()
-        treeModel.itemChanged.connect(self.on_filter_check_uncheck)
+        tree_model = QStandardItemModel()
+        tree_model.itemChanged.connect(self.on_filter_check_uncheck)
 
-        rootNode = treeModel.invisibleRootItem()
+        root_node = tree_model.invisibleRootItem()
 
         for db_filter_type in self.session.query(sql.FilterType).order_by(sql.FilterType.name).all():
             item = FilterItem(db_filter_type, False)
-            rootNode.appendRow(item)
+            root_node.appendRow(item)
             create_constraints_items(item, db_filter_type.id, None)
 
-        constraints_tree.setModel(treeModel)
+        constraints_tree.setModel(tree_model)
         constraints_tree.expandAll()
 
     def set_constraints(self, db_books):
@@ -289,7 +290,7 @@ class MainWindow(QMainWindow):
     def set_filter(self, db_books, value, field):
         val = value.strip()
         if len(val):
-            val = '%'+val+'%'
+            val = '%' + val + '%'
             db_books = db_books.filter(field.ilike(val))
         return db_books
 

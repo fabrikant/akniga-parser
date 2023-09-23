@@ -62,7 +62,7 @@ class TableBooks(QTableView):
             return
         command = [script_path, '--download-method',
                    settings.value('DownloadBooks/download-method', type=str, defaultValue=DOWNLOAD_REQUESTS),
-                   '--naming', settings.value('DownloadBooks/naming', type=str,defaultValue=NAMING_ID)]
+                   '--naming', settings.value('DownloadBooks/naming', type=str, defaultValue=NAMING_ID)]
         output = settings.value('DownloadBooks/output', type=str)
         if output == '':
             output = '.'
