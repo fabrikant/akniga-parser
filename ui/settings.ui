@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
+    <width>860</width>
     <height>255</height>
    </rect>
   </property>
@@ -41,14 +41,14 @@
        <item row="7" column="0">
         <widget class="QCheckBox" name="full_scan">
          <property name="text">
-          <string>Продолжить сканирование, если книга найдена в базе</string>
+          <string>Полностью просканировать сайт (иначе остановиться, как только следующая книга найдется в базе)</string>
          </property>
         </widget>
        </item>
        <item row="8" column="0">
         <widget class="QCheckBox" name="update">
          <property name="text">
-          <string>Обновлять найденные объекты</string>
+          <string>Обновлять свежими данными существующие объекты (замедляет при полном сканировании и большой базе)</string>
          </property>
         </widget>
        </item>
@@ -87,7 +87,7 @@
        <item row="9" column="0">
         <widget class="QCheckBox" name="genres">
          <property name="text">
-          <string>Сканировать жанры</string>
+          <string>Сканировать жанры после окончания основного сканирования</string>
          </property>
         </widget>
        </item>

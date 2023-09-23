@@ -13,12 +13,12 @@ class SettingsDialog(QDialog):
         super(SettingsDialog, self).__init__()
         uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('settings.ui'), self)
 
-        self.books_download_method.addItem(DOWNLOAD_REQUESTS)
-        self.books_download_method.addItem(DOWNLOAD_FFMPEG)
+        self.books_download_method.addItem('Запросами к сайту', DOWNLOAD_REQUESTS)
+        self.books_download_method.addItem('Программой ffmpeg', DOWNLOAD_FFMPEG)
 
-        self.books_naming_method.addItem(NAMING_DEEP)
-        self.books_naming_method.addItem(NAMING_WIDE)
-        self.books_naming_method.addItem(NAMING_ID)
+        self.books_naming_method.addItem('Каталоги: Автор/Серия/Название', NAMING_DEEP)
+        self.books_naming_method.addItem('Каталог: Автор-Серия-Название', NAMING_WIDE)
+        self.books_naming_method.addItem('Каталог: Идентификатор из адреса страницы', NAMING_ID)
 
         self.page_start.setValidator(QIntValidator())
         self.page_stop.setValidator(QIntValidator())
@@ -34,11 +34,16 @@ class SettingsDialog(QDialog):
         self.genres.setCheckState(settings.value('DatabaseUpdate/genres', defaultValue=2, type=int))
 
         self.books_dir.setText(settings.value('DownloadBooks/output', type=str))
-        self.books_download_method.setCurrentText(settings.value('DownloadBooks/download-method', type=str,
-                                                                 defaultValue=DOWNLOAD_REQUESTS))
 
-        self.books_naming_method.setCurrentText(settings.value('DownloadBooks/naming', type=str,
-                                                                 defaultValue=NAMING_DEEP))
+        current_data = settings.value('DownloadBooks/download-method', type=str, defaultValue=DOWNLOAD_REQUESTS)
+        index = self.books_download_method.findData(current_data)
+        if index > -1:
+            self.books_download_method.setCurrentIndex(index)
+
+        current_data = settings.value('DownloadBooks/naming', type=str, defaultValue=NAMING_DEEP)
+        index = self.books_naming_method.findData(current_data)
+        if index > -1:
+            self.books_naming_method.setCurrentIndex(index)
 
         self.app_parser.setText(settings.value('Applications/parser', type=str))
         self.app_downloader.setText(settings.value('Applications/downloader', type=str))
@@ -54,8 +59,8 @@ class SettingsDialog(QDialog):
         settings.setValue('DatabaseUpdate/genres', self.genres.checkState())
 
         settings.setValue('DownloadBooks/output', self.books_dir.text())
-        settings.setValue('DownloadBooks/download-method', self.books_download_method.currentText())
-        settings.setValue('DownloadBooks/naming', self.books_naming_method.currentText())
+        settings.setValue('DownloadBooks/download-method', self.books_download_method.currentData())
+        settings.setValue('DownloadBooks/naming', self.books_naming_method.currentData())
 
         settings.setValue('Applications/parser', self.app_parser.text())
         settings.setValue('Applications/downloader', self.app_downloader.text())
