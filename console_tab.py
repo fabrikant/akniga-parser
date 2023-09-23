@@ -16,24 +16,24 @@ class ConsoleTabItem(QWidget):
         self.process.readyReadStandardError.connect(self.on_stderr)
         self.process.finished.connect(self.on_finished)
 
-        command_path = command[0]
-        if command_path.is_file():
-            programm = str(command_path)
-            arguments = command[1:]
-        elif command_path.with_suffix('.exe').is_file():
-            programm = str(command_path.with_suffix('.exe'))
-            arguments = command[1:]
-        elif command_path.with_suffix('.py').is_file():
-            programm = 'python'
-            arguments = [str(command_path.with_suffix('.py'))] + command[1:]
-        else:
-            programm = 'echo'
-            arguments = [f'Не найден исполняемый файл {str(command_path)}']
-
-        print(programm)
-        print(arguments)
+        # command_path = command[0]
+        # if command_path.is_file():
+        #     programm = str(command_path)
+        #     arguments = command[1:]
+        # elif command_path.with_suffix('.exe').is_file():
+        #     programm = str(command_path.with_suffix('.exe'))
+        #     arguments = command[1:]
+        # elif command_path.with_suffix('.py').is_file():
+        #     programm = 'python'
+        #     arguments = [str(command_path.with_suffix('.py'))] + command[1:]
+        # else:
+        #     programm = 'echo'
+        #     arguments = [f'Не найден исполняемый файл {str(command_path)}']
+        #
+        # print(programm)
+        # print(arguments)
         try:
-            self.process.start(programm, arguments)
+            self.process.start(command[0], command[1:])
         except Exception as error:
             self.console_text.append(f"{error}")
 
@@ -68,15 +68,14 @@ class ConsoleTab(QTabWidget):
         # Сюда передается док, который нужно закрывать, когда больше нет закладок
         self.console_dock = None
 
-    def start_process(self, command):
+    def start_process(self, command, type_command=None):
 
         index = self.find_item_by_command(command)
         if index is None:
-            tab_text = str(command[0])
-            if 'akniga_parser' in tab_text:
-                tab_text = 'db update'
-            elif 'akniga_dl' in tab_text:
+            if type_command is None:
                 tab_text = command[-2].strip('/').split('/')[-1]
+            else:
+                tab_text = type_command
             self.setCurrentIndex(self.addTab(ConsoleTabItem(self, command, self.command_to_str(command)), tab_text))
         else:
             self.setCurrentIndex(index)

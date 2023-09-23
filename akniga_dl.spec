@@ -11,7 +11,6 @@ hiddenimports += collect_submodules('BeautifulSoup')
 hiddenimports += collect_submodules('m3u8')
 hiddenimports += collect_submodules('tqdm')
 hiddenimports += collect_submodules('akniga_global')
-hiddenimports += collect_submodules('akniga_parser')
 
 
 block_cipher = None
@@ -21,7 +20,7 @@ a = Analysis(
     ['akniga_dl.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('selenium_srt/ca.crt', 'seleniumwire'), ('selenium_srt/ca.key', 'seleniumwire')],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
@@ -37,21 +36,27 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
     [],
+    exclude_binaries=True,
     name='akniga_dl',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+)
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='akniga_dl',
 )

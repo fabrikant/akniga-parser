@@ -75,11 +75,12 @@ class MainWindow(QMainWindow):
             self.write_settings()
 
     def on_db_update(self):
-        self.console_dock.show()
-        script_path = Path(__file__).parent.joinpath('akniga_parser')
-        command = [script_path, '-db', self.connection_string]
-
         settings = QSettings(config_file_name, QSettings.IniFormat)
+        script_path = settings.value('Applications/parser', type=str)
+        if script_path.strip() == '':
+            QMessageBox.warning('Не выбран парсер.')
+            return
+        command = [script_path, '-db', self.connection_string]
 
         start = settings.value('DatabaseUpdate/start-page', type=int, defaultValue=0)
         stop = settings.value('DatabaseUpdate/stop-page', type=int, defaultValue=0)
@@ -93,8 +94,8 @@ class MainWindow(QMainWindow):
             command += ['--update']
         if settings.value('DatabaseUpdate/genres', defaultValue=2, type=int) == 2:
             command += ['--genres']
-
-        self.console_tab.start_process(command)
+        self.console_dock.show()
+        self.console_tab.start_process(command, type_command='db update')
 
     def on_request_to_start_process(self, command):
         self.console_dock.show()

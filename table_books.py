@@ -67,7 +67,10 @@ class TableBooks(QTableView):
         if not url:
             return
         settings = QSettings(config_file_name, QSettings.IniFormat)
-        script_path = Path(__file__).parent.joinpath('akniga_dl')
+        script_path = settings.value('Applications/downloader', type=str)
+        if script_path.strip() == '':
+            QMessageBox.warning('Не выбран загрузчик.')
+            return
         command = [script_path, '--download-method',
                    settings.value('DownloadBooks/download-method', type=str, defaultValue=DOWNLOAD_REQUESTS),
                    '--naming', settings.value('DownloadBooks/naming', type=str,defaultValue=NAMING_ID)]

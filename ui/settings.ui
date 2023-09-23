@@ -28,10 +28,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -181,6 +181,68 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Исполняемые файлы</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="3" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="app_parser"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Загрузчик книг (akniga_dl)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="app_downloader"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Парсер сайта (akniga_parser)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="app_downloader_select">
+         <property name="text">
+          <string>Выбрать</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>img/touch_app.png</normaloff>img/touch_app.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="app_parser_select">
+         <property name="text">
+          <string>Выбрать</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>img/touch_app.png</normaloff>img/touch_app.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -197,6 +259,8 @@
   <tabstop>books_dir_select</tabstop>
   <tabstop>books_download_method</tabstop>
   <tabstop>books_naming_method</tabstop>
+  <tabstop>app_parser</tabstop>
+  <tabstop>app_downloader</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -264,9 +328,43 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>app_downloader_select</sender>
+   <signal>clicked()</signal>
+   <receiver>settings</receiver>
+   <slot>on_app_downloader_select()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>722</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>app_parser_select</sender>
+   <signal>clicked()</signal>
+   <receiver>settings</receiver>
+   <slot>on_app_parser_select()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>722</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_books_dir_select()</slot>
   <slot>write_settings()</slot>
+  <slot>on_app_parser_select()</slot>
+  <slot>on_app_downloader_select()</slot>
  </slots>
 </ui>

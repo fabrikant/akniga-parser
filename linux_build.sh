@@ -5,15 +5,18 @@ source .venv/bin/activate
 pip install -r requirement.txt
 pip install pyinstaller
 
-pyinstaller -y -F \
+pyinstaller -y \
 --collect-submodules logging \
 --collect-submodules requests \
 --collect-submodules BeautifulSoup \
 --collect-submodules sqlalchemy \
 --collect-submodules akniga_sql \
+--collect-submodules akniga_global \
 akniga_parser.py
 
-pyinstaller -y -F \
+pyinstaller -y \
+--add-data selenium_srt/ca.crt:seleniumwire \
+--add-data selenium_srt/ca.key:seleniumwire \
 --collect-submodules brotli \
 --collect-submodules pathvalidate \
 --collect-submodules logging \
@@ -23,23 +26,16 @@ pyinstaller -y -F \
 --collect-submodules m3u8 \
 --collect-submodules tqdm \
 --collect-submodules akniga_global \
---collect-submodules akniga_parser \
 akniga_dl.py
 
-pyinstaller -y -F --add-data ui/:ui/ \
---add-binary dist/akniga_parser:. \
---add-binary dist/akniga_dl:. \
+pyinstaller -y --add-data ui/:ui/ \
 --add-data akniga_settings.py:. \
 --add-data console_tab.py:. \
 --add-data table_books.py:. \
 --add-data table_model.py:. \
 --add-data time_slider.py:. \
---collect-submodules brotli \
 --collect-submodules logging \
---collect-submodules webbrowser \
 --collect-submodules superqt \
---collect-submodules requests \
---collect-submodules BeautifulSoup \
 --collect-submodules sqlalchemy \
 --collect-submodules akniga_global \
 --collect-submodules  akniga_settings \
@@ -50,5 +46,3 @@ pyinstaller -y -F --add-data ui/:ui/ \
 --collect-submodules time_slider \
 akniga_viewer.py
 
-sed -i 's/dist\/akniga_parser/dist\/akniga_parser.exe/' akniga_viewer.spec
-sed -i 's/dist\/akniga_dl/dist\/akniga_dl.exe/' akniga_viewer.spec

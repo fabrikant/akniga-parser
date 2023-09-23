@@ -39,6 +39,10 @@ class SettingsDialog(QDialog):
         self.books_naming_method.setCurrentText(settings.value('DownloadBooks/naming', type=str,
                                                                  defaultValue=NAMING_DEEP))
 
+        self.app_parser.setText(settings.value('Applications/parser', type=str))
+        self.app_downloader.setText(settings.value('Applications/downloader', type=str))
+
+
     def write_settings(self):
         settings = QSettings(config_file_name, QSettings.IniFormat)
         settings.setValue('connection_string', self.connection_string.text())
@@ -51,9 +55,19 @@ class SettingsDialog(QDialog):
 
         settings.setValue('DownloadBooks/output', self.books_dir.text())
         settings.setValue('DownloadBooks/download-method', self.books_download_method.currentText())
-
         settings.setValue('DownloadBooks/naming', self.books_naming_method.currentText())
+
+        settings.setValue('Applications/parser', self.app_parser.text())
+        settings.setValue('Applications/downloader', self.app_downloader.text())
 
     def on_books_dir_select(self):
         path = QFileDialog.getExistingDirectory(self, caption='Выбрать каталог')
         self.books_dir.setText(path)
+
+    def on_app_parser_select(self):
+        path, _ = QFileDialog.getOpenFileNames(self, caption='akniga_parser')
+        self.app_parser.setText(path[0])
+
+    def on_app_downloader_select(self):
+        path, _ = QFileDialog.getOpenFileNames(self, caption='akniga_dl')
+        self.app_downloader.setText(path[0])
