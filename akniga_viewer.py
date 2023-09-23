@@ -33,7 +33,6 @@ class MainWindow(QMainWindow):
         self.table_books.addAction(self.copy_url)
         self.table_books.addAction(self.download_book)
         self.table_books.start_process_slot = self.on_request_to_start_process
-        self.console_tab.console_dock = self.console_dock
 
     def closeEvent(self, event):
         self.write_settings()
@@ -191,6 +190,10 @@ class MainWindow(QMainWindow):
             if not filter_edit is None:
                 filter_edit.setText(value)
                 self.get_data()
+
+    def on_console_tab_current_widget(self, index):
+        if index < 0:
+            self.console_dock.close()
 
     # Жанры (Sections)
     def load_sections(self):

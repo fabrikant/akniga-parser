@@ -518,6 +518,7 @@
    <addaction name="copy_url"/>
    <addaction name="download_book"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="db_connect_action">
    <property name="icon">
     <iconset>
@@ -1182,6 +1183,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>console_tab</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_console_tab_current_widget(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>653</x>
+     <y>780</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>653</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_db_connect()</slot>
@@ -1203,5 +1220,6 @@
   <slot>on_db_update()</slot>
   <slot>on_db_create()</slot>
   <slot>on_settings()</slot>
+  <slot>on_console_tab_current_widget(int)</slot>
  </slots>
 </ui>
