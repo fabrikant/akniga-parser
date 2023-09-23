@@ -5,8 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtGui
 from PyQt5.Qt import QStandardItemModel, QStandardItem
 import akniga_sql as sql
-from akniga_settings import SettingsDialog
-from akniga_global import settings
+from akniga_settings import SettingsDialog, settings
 import logging
 
 logger = logging.getLogger(__name__)

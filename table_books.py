@@ -3,7 +3,8 @@ from table_model import BooksTableModel
 from PyQt5.QtGui import QIntValidator, QIcon
 from pathlib import Path
 import webbrowser
-from akniga_global import NAMING_ID, DOWNLOAD_REQUESTS, settings
+from akniga_dl import NAMING_ID, DOWNLOAD_REQUESTS
+from akniga_settings import settings
 
 
 class TableBooks(QTableView):

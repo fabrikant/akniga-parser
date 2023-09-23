@@ -7,7 +7,6 @@ hiddenimports += collect_submodules('requests')
 hiddenimports += collect_submodules('BeautifulSoup')
 hiddenimports += collect_submodules('sqlalchemy')
 hiddenimports += collect_submodules('akniga_sql')
-hiddenimports += collect_submodules('akniga_global')
 
 
 block_cipher = None

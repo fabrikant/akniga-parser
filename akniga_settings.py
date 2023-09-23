@@ -2,8 +2,10 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QIntValidator
 from pathlib import Path
-from akniga_global import NAMING_DEEP, NAMING_WIDE, NAMING_ID, DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG, settings
+from akniga_dl import NAMING_DEEP, NAMING_WIDE, NAMING_ID, DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG
+from PyQt5.QtCore import QSettings
 
+settings = QSettings(QSettings.IniFormat, QSettings.UserScope, 'akniga', 'akniga_parser', None)
 
 class SettingsDialog(QDialog):
 

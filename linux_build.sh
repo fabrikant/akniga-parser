@@ -14,7 +14,6 @@ pyinstaller -y \
 --collect-submodules BeautifulSoup \
 --collect-submodules sqlalchemy \
 --collect-submodules akniga_sql \
---collect-submodules akniga_global \
 akniga_parser.py
 
 pyinstaller -y \
@@ -28,10 +27,9 @@ pyinstaller -y \
 --collect-submodules BeautifulSoup \
 --collect-submodules m3u8 \
 --collect-submodules tqdm \
---collect-submodules akniga_global \
 akniga_dl.py
 
-pyinstaller -y -i ui/img/book.ico \
+pyinstaller -y -i ui/img/book.ico --windowed \
 --add-data ui/:ui/ \
 --add-data akniga_settings.py:. \
 --add-data console_tab.py:. \
@@ -41,7 +39,6 @@ pyinstaller -y -i ui/img/book.ico \
 --collect-submodules logging \
 --collect-submodules superqt \
 --collect-submodules sqlalchemy \
---collect-submodules akniga_global \
 --collect-submodules  akniga_settings \
 --collect-submodules akniga_sql \
 --collect-submodules console_tab \

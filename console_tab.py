@@ -25,7 +25,7 @@ class ConsoleTabItem(QWidget):
 
     def print_message(self, data):
         if 'nt' in os.name:
-            os_code = 'CP-1251'
+            os_code = 'CP1251'
         else:
             os_code = 'utf-8'
         stdout = bytes(data).decode(os_code, errors='replace')

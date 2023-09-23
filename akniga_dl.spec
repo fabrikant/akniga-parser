@@ -10,7 +10,6 @@ hiddenimports += collect_submodules('requests')
 hiddenimports += collect_submodules('BeautifulSoup')
 hiddenimports += collect_submodules('m3u8')
 hiddenimports += collect_submodules('tqdm')
-hiddenimports += collect_submodules('akniga_global')
 
 
 block_cipher = None
