@@ -485,7 +485,6 @@
    </attribute>
    <addaction name="db_connect_action"/>
    <addaction name="db_create_action"/>
-   <addaction name="db_update_action"/>
    <addaction name="settings"/>
   </widget>
   <widget class="QToolBar" name="tool_bar_tools">
@@ -514,6 +513,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="db_update_action"/>
    <addaction name="go_to_url"/>
    <addaction name="copy_url"/>
    <addaction name="download_book"/>
