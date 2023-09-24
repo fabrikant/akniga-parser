@@ -25,8 +25,9 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('main.ui'), self)
-        self.read_settings()
+        self.connection_string = None
         self.session = None
+        self.read_settings()
         self.filter_time_slider.valueChanged.emit(self.filter_time_slider.sliderPosition())
         self.open_database()
         self.console_dock.hide()
@@ -133,10 +134,6 @@ class MainWindow(QMainWindow):
     def on_filter_edit(self):
         self.get_data()
 
-    def on_filter_text_changed(self, QString):
-        if QString == '':
-            self.get_data()
-
     def on_remove_constraints(self):
         self.load_constraints()
         self.get_data()
@@ -178,14 +175,14 @@ class MainWindow(QMainWindow):
         self.time_max.setText(slider.get_description(values[1]))
 
     def on_table_book_dbl_click(self, model_index):
-        dict = {'Название': self.filter_title,
+        col_map = {'Название': self.filter_title,
                 'Автор': self.filter_author,
                 'Серия': self.filter_series,
                 'Исполнитель': self.filter_performer}
         model = self.table_books.model()
         value, column_name, _, _ = model.get_cell_information(model_index)
         if value is not None:
-            filter_edit = dict[column_name]
+            filter_edit = col_map[column_name]
             if filter_edit is not None:
                 filter_edit.setText(value)
                 self.get_data()

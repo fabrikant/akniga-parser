@@ -1206,7 +1206,6 @@
   <slot>on_remove_constraints()</slot>
   <slot>on_remove_sections()</slot>
   <slot>on_filter_edit()</slot>
-  <slot>on_filter_text_changed()</slot>
   <slot>on_filter_title_clear()</slot>
   <slot>on_filter_author_clear()</slot>
   <slot>on_filter_performer_clear()</slot>
