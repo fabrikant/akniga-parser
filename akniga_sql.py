@@ -16,6 +16,9 @@ class FilterType(Base):
     def __str__(self):
         return f'name: {self.name}; id: {self.id}; url: {self.url}'
 
+    def postprocessing(self):
+        pass
+
 
 class Filter(Base):
     __tablename__ = 'filters'
@@ -32,6 +35,9 @@ class Filter(Base):
     def __str__(self):
         return f'name: {self.name}; id: {self.id}; url: {self.url}'
 
+    def postprocessing(self):
+        pass
+
 
 class BookFilter(Base):
     __tablename__ = 'books_filters'
@@ -39,6 +45,9 @@ class BookFilter(Base):
     filter_id = Column(Integer, ForeignKey('filters.id'), primary_key=True)
     books = relationship('Book', back_populates='filters')
     filters = relationship('Filter', order_by='Book.title', back_populates='books')
+
+    def postprocessing(self):
+        pass
 
 
 class Section(Base):
@@ -51,6 +60,9 @@ class Section(Base):
     def __str__(self):
         return f'name: {self.name}; id: {self.id}; url: {self.url}'
 
+    def postprocessing(self):
+        pass
+
 
 class BookSection(Base):
     __tablename__ = 'books_sections'
@@ -59,43 +71,57 @@ class BookSection(Base):
     books = relationship('Book', back_populates='sections')
     sections = relationship('Section', order_by='Book.title', back_populates='books')
 
+
 class Author(Base):
     __tablename__ = 'authors'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
+    name_lowercase = Column(String, nullable=False)
     url = Column(String, nullable=False, unique=True)
     books = relationship('Book', order_by='Book.title', back_populates='author')
 
     def __str__(self):
         return f'name: {self.name}; id: {self.id}; url: {self.url}'
 
+    def postprocessing(self):
+        self.name_lowercase = self.name.lower()
+
 
 class Performer(Base):
     __tablename__ = 'performers'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
+    name_lowercase = Column(String, nullable=False)
     url = Column(String, nullable=False, unique=True)
     books = relationship('Book', order_by='Book.title', back_populates='performer')
 
     def __str__(self):
         return f'name: {self.name}; id: {self.id}; url: {self.url}'
 
+    def postprocessing(self):
+        self.name_lowercase = self.name.lower()
 
-class Seria(Base):
-    __tablename__ = 'serias'
+
+class Series(Base):
+    __tablename__ = 'series'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
+    name_lowercase = Column(String, nullable=False)
     url = Column(String, nullable=False, unique=True)
-    books = relationship('Book', order_by='Book.title', back_populates='seria')
+    books = relationship('Book', order_by='Book.title', back_populates='series')
 
     def __str__(self):
         return f'name: {self.name}; id: {self.id}; url: {self.url}'
+
+    def postprocessing(self):
+        self.name_lowercase = self.name.lower()
 
 
 class Book(Base):
     __tablename__ = 'books'
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String)
+    title_lowercase = Column(String, nullable=False)
     description = Column(String)
     duration = Column(Integer, nullable=False)
     duration_hours = Column(Integer, nullable=False)
@@ -103,18 +129,22 @@ class Book(Base):
     free = Column(Boolean)
     author_id = Column(Integer, ForeignKey('authors.id'))
     performer_id = Column(Integer, ForeignKey('performers.id'), nullable=True)
-    seria_id = Column(Integer, ForeignKey('serias.id'), nullable=True)
+    series_id = Column(Integer, ForeignKey('series.id'), nullable=True)
+    series_number = Column(Float, nullable=True)
     year = Column(Integer, nullable=True)
     rating = Column(Float, nullable=True)
     url = Column(String, nullable=False, unique=True)
     author = relationship("Author", back_populates="books")
     performer = relationship("Performer", back_populates="books")
-    seria = relationship("Seria", back_populates="books")
+    series = relationship("Series", back_populates="books")
     filters = relationship("BookFilter", back_populates="books")
     sections = relationship("BookSection", back_populates="books")
 
     def __str__(self):
         return f'title: {self.title}; id: {self.id}; url: {self.url}'
+
+    def postprocessing(self):
+        self.title_lowercase = self.title.lower()
 
 
 def create_database(connection_string):
@@ -135,11 +165,13 @@ def get_or_create(session, model, update, **kwargs):
         if update:
             for key, value in kwargs.items():
                 setattr(instance, key, value)
+                instance.postprocessing()
             session.add(instance)
             session.commit()
             logger.debug(f'UPDATE - type: {model}; {instance}')
     else:
         instance = model(**kwargs)
+        instance.postprocessing()
         session.add(instance)
         session.commit()
         logger.debug(f'CREATED - type: {model}; {instance}')

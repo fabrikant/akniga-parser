@@ -133,10 +133,16 @@ def add_book_to_database(book_url, session, update):
         series_soup = book_soup.find('div', {'class': 'about--series'})
         if not series_soup is None:
             series_soup = series_soup.find('a')
-            seria_url = series_soup['href']
-            seria = series_soup.get_text().split('(')[0].replace('\n', '')
-            book_db.seria_id = sql.get_or_create(session, sql.Seria, update,
-                                                        url=seria_url, name=seria).id
+            series_url = series_soup['href']
+            series_split = series_soup.get_text().split('(')
+            series = series_split[0].replace('\n', '')
+            book_db.series_id = sql.get_or_create(session, sql.Series, update,
+                                                  url=series_url, name=series).id
+            if len(series_split) > 1:
+                series_number = series_split[1].replace(')', '').replace('\n', '').strip()
+                series_number = convert_to_float(series_number)
+                book_db.series_number = series_number
+
             session.add(book_db)
 
         # Рейтинг

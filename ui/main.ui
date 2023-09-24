@@ -246,7 +246,7 @@
           </widget>
          </item>
          <item row="8" column="0">
-          <widget class="QLineEdit" name="filter_seria">
+          <widget class="QLineEdit" name="filter_series">
            <property name="clearButtonEnabled">
             <bool>false</bool>
            </property>
@@ -379,7 +379,7 @@
           </widget>
          </item>
          <item row="8" column="1">
-          <widget class="QPushButton" name="filter_seria_clear">
+          <widget class="QPushButton" name="filter_series_clear">
            <property name="icon">
             <iconset>
              <normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/close_FILL0_wght400_GRAD0_opsz24.png</iconset>
@@ -668,8 +668,8 @@
   <tabstop>filter_author_clear</tabstop>
   <tabstop>filter_performer</tabstop>
   <tabstop>filter_performer_clear</tabstop>
-  <tabstop>filter_seria</tabstop>
-  <tabstop>filter_seria_clear</tabstop>
+  <tabstop>filter_series</tabstop>
+  <tabstop>filter_series_clear</tabstop>
   <tabstop>time_min</tabstop>
   <tabstop>time_max</tabstop>
   <tabstop>filter_time_slider</tabstop>
@@ -944,7 +944,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>filter_seria</sender>
+   <sender>filter_series</sender>
    <signal>editingFinished()</signal>
    <receiver>MainWindow</receiver>
    <slot>on_filter_edit()</slot>
@@ -960,10 +960,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>filter_seria_clear</sender>
+   <sender>filter_series_clear</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_filter_seria_clear()</slot>
+   <slot>on_filter_series_clear()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>261</x>
@@ -1214,7 +1214,7 @@
   <slot>on_page_prev()</slot>
   <slot>on_page_reload()</slot>
   <slot>on_page_set()</slot>
-  <slot>on_filter_seria_clear()</slot>
+  <slot>on_filter_series_clear()</slot>
   <slot>on_filter_time_slider_changed()</slot>
   <slot>on_table_book_dbl_click()</slot>
   <slot>on_db_update()</slot>

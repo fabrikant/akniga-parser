@@ -122,8 +122,8 @@ class MainWindow(QMainWindow):
     def on_filter_performer_clear(self):
         self.clear_text_filter(self.filter_performer)
 
-    def on_filter_seria_clear(self):
-        self.clear_text_filter(self.filter_seria)
+    def on_filter_series_clear(self):
+        self.clear_text_filter(self.filter_series)
 
     def clear_text_filter(self, text_field):
         if not text_field.text() == '':
@@ -180,7 +180,7 @@ class MainWindow(QMainWindow):
     def on_table_book_dbl_click(self, model_index):
         dict = {'Название': self.filter_title,
                 'Автор': self.filter_author,
-                'Серия': self.filter_seria,
+                'Серия': self.filter_series,
                 'Исполнитель': self.filter_performer}
         model = self.table_books.model()
         value, column_name, _, _ = model.get_cell_information(model_index)
@@ -288,8 +288,8 @@ class MainWindow(QMainWindow):
     def set_filter(self, db_books, value, field):
         val = value.strip()
         if len(val):
-            val = '%' + val + '%'
-            db_books = db_books.filter(field.ilike(val))
+            val = '%' + val.lower() + '%'
+            db_books = db_books.filter(field.like(val))
         return db_books
 
     def get_data(self):
@@ -297,7 +297,8 @@ class MainWindow(QMainWindow):
             return
         self.description.setDocument(QtGui.QTextDocument(''))
         db_books = self.session.query(sql.Book.title.label('Название'), sql.Author.name.label('Автор'),
-                                      sql.Seria.name.label('Серия'), sql.Book.duration_hours.label('час.'),
+                                      sql.Series.name.label('Серия'), sql.Book.series_number.label('№ сер.'),
+                                      sql.Book.duration_hours.label('час.'),
                                       sql.Book.duration_minutes.label('мин.'), sql.Performer.name.label('Исполнитель'),
                                       sql.Book.year.label('Год'), sql.Book.rating.label('Рейтинг'),
                                       sql.Book.free.label('Беспл.'), sql.Book)
@@ -305,10 +306,10 @@ class MainWindow(QMainWindow):
         db_books = self.set_constraints(db_books)
         db_books = self.set_sections(db_books)
 
-        db_books = self.set_filter(db_books, self.filter_title.text(), sql.Book.title)
-        db_books = self.set_filter(db_books, self.filter_author.text(), sql.Author.name)
-        db_books = self.set_filter(db_books, self.filter_performer.text(), sql.Performer.name)
-        db_books = self.set_filter(db_books, self.filter_seria.text(), sql.Seria.name)
+        db_books = self.set_filter(db_books, self.filter_title.text(), sql.Book.title_lowercase)
+        db_books = self.set_filter(db_books, self.filter_author.text(), sql.Author.name_lowercase)
+        db_books = self.set_filter(db_books, self.filter_performer.text(), sql.Performer.name_lowercase)
+        db_books = self.set_filter(db_books, self.filter_series.text(), sql.Series.name_lowercase)
 
         time_slider = self.filter_time_slider
         time_min_pos, time_max_pos = time_slider.sliderPosition()
@@ -320,7 +321,7 @@ class MainWindow(QMainWindow):
         if self.filter_free.isChecked():
             db_books = db_books.filter(sql.Book.free)
 
-        db_books = db_books.outerjoin(sql.Author).outerjoin(sql.Performer).outerjoin(sql.Seria)
+        db_books = db_books.outerjoin(sql.Author).outerjoin(sql.Performer).outerjoin(sql.Series)
 
         self.table_books.on_get_data(db_books, self, app.clipboard())
 
