@@ -41,13 +41,13 @@ class MainWindow(QMainWindow):
 
     def read_settings(self):
         self.connection_string = settings.value('connection_string')
-        key = 'aknniga_viewer/geom'
+        key = 'aknniga_viewer/geometry'
         if settings.contains(key):
             self.setGeometry(settings.value(key))
 
     def write_settings(self):
         settings.setValue('connection_string', self.connection_string)
-        settings.setValue('aknniga_viewer/pos', self.pos())
+        settings.setValue('aknniga_viewer/geometry', self.geometry())
 
     def open_database(self):
         self.setWindowTitle('akniga db viewer')
