@@ -178,6 +178,15 @@ def add_book_to_database(book_url, session, update):
                                                                 types_id=filter_type_db.id)
 
                     sql.create_book_filter_if_not_exists(session, book_id=book_db.id, filter_id=filter_db.id)
+        # Жанры
+        sections_soup = book_soup.findAll('a', {'class': 'section__title'})
+        if sections_soup is not None:
+            for section_soup in sections_soup:
+                section_url = section_soup['href']
+                section_name = section_soup.get_text().replace('\n', '').strip()
+                section_db = sql.get_or_create(session, sql.Section, update, url=section_url, name=section_name)
+                sql.create_book_section_if_not_exists(session, book_id=book_db.id, section_id=section_db.id)
+
         session.commit()
         logger.info(f'BOOK complete - {book_db}')
         return book_db
@@ -211,58 +220,6 @@ def start_parsing(connection_string, update, full_scan, start_page, stop_page):
             return
 
 
-def get_sections(session):
-    result = []
-    get_url = f'{akniga_url}/sections/'
-    logger.info(f'get sections urls: {get_url}')
-    res = requests.get(get_url, headers=request_heders())
-    if res.status_code == 200:
-        soup_page = BeautifulSoup(res.text, 'html.parser')
-        sections = soup_page.findAll('h4')
-        for section_soup in sections:
-            section_soup = section_soup.find('a')
-            if not section_soup is None:
-                section_url = section_soup['href']
-                section_name = section_soup.get_text().strip()
-                if akniga_url in section_url:
-                    section_db = sql.get_or_create(session, sql.Section, True,
-                                             url=section_url, name=section_name)
-                    result.append(section_db)
-        return result
-    else:
-        logger.error(f'code: {res.status_code} while get: {get_url}')
-        return
-
-
-def parse_section(session, update, section_db):
-    get_url = section_db.url
-    logger.info(f'get section {section_db.name} urls: {get_url}')
-    while not get_url is None:
-        logger.info(f'get new books page {section_db.name}: {get_url}')
-        res = requests.get(get_url, headers=request_heders())
-        if res.status_code == 200:
-            soup_page = BeautifulSoup(res.text, 'html.parser')
-
-            for book_url in books_url_iter(soup_page):
-                book_db = session.query(sql.Book).filter_by(url=book_url).first()
-                if not book_db:
-                    book_db = add_book_to_database(book_url, session, update)
-
-                sql.create_book_section_if_not_exists(session, book_id=book_db.id, section_id=section_db.id)
-
-            get_url = get_next_page_url(soup_page)
-        else:
-            logger.error(f'code: {res.status_code} while get: {get_url}')
-            return
-
-
-def start_parsing_sections(connection_string, update):
-    session = sql.get_session(connection_string)
-    sections_db = get_sections(session)
-    for section_db in sections_db:
-        parse_section(session, update, section_db)
-
-
 if __name__ == '__main__':
     database_connection_string = 'sqlite:///akniga.sqlite'
     logging.basicConfig(
@@ -286,15 +243,8 @@ if __name__ == '__main__':
     parser.add_argument('--stop-page', type=int, default=0,
                         help='Последняя сканируемая страница. Полезно, если необходимо просканировать определенный '
                              'диапазон страниц. Если параметр не указан, то ограничивать сканирование будет параметр -f')
-    parser.add_argument('-g', '--genres',  default=False, action='store_true',
-                        help=f'Дополнительно просканировать книги по жанрам. Адреса: {akniga_url}/sections/'
-                             'При обычном сканировании невозможно определить к каким жанрам относится книга, поэтому'
-                             'требуется еще один проход. Если не планируется осуществлять отбор по жанрам, можно не'
-                             'выполнять')
 
     args = parser.parse_args()
     logger.debug(args)
     sql.create_database(args.database)
     start_parsing(args.database, args.update, args.full_scan, args.start_page, args.stop_page)
-    if args.genres:
-        start_parsing_sections(args.database, args.update)

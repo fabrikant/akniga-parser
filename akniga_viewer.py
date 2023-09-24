@@ -99,8 +99,6 @@ class MainWindow(QMainWindow):
             command += ['--full-scan']
         if settings.value('DatabaseUpdate/update', defaultValue=0, type=int) == 2:
             command += ['--update']
-        if settings.value('DatabaseUpdate/genres', defaultValue=2, type=int) == 2:
-            command += ['--genres']
         self.console_dock.show()
         self.console_tab.start_process(command, type_command='db update')
 

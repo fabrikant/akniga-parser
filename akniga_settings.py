@@ -31,7 +31,6 @@ class SettingsDialog(QDialog):
         self.page_stop.setText(str(settings.value('DatabaseUpdate/stop-page', type=int)))
         self.full_scan.setCheckState(settings.value('DatabaseUpdate/full-scan', defaultValue=0, type=int))
         self.update.setCheckState(settings.value('DatabaseUpdate/update', defaultValue=0, type=int))
-        self.genres.setCheckState(settings.value('DatabaseUpdate/genres', defaultValue=2, type=int))
 
         self.books_dir.setText(settings.value('DownloadBooks/output', type=str))
 
@@ -56,7 +55,6 @@ class SettingsDialog(QDialog):
         settings.setValue('DatabaseUpdate/stop-page', int(f'0{self.page_stop.text()}'))
         settings.setValue('DatabaseUpdate/full-scan', self.full_scan.checkState())
         settings.setValue('DatabaseUpdate/update', self.update.checkState())
-        settings.setValue('DatabaseUpdate/genres', self.genres.checkState())
 
         settings.setValue('DownloadBooks/output', self.books_dir.text())
         settings.setValue('DownloadBooks/download-method', self.books_download_method.currentData())
