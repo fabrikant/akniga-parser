@@ -244,7 +244,6 @@ def create_work_dirs(output_folder, book_json, book_soup, book_url, naming):
         book_folder = Path(output_folder) / sanitize_filename(book_url.strip('/').split('/')[-1])
     else:
         # sanitize (make valid) book title
-        book_json['title'] = sanitize_filename(book_json['title'])
         book_json['titleonly'] = sanitize_filename(book_json['titleonly'])
         book_json['author'] = sanitize_filename(book_json['author'])
         if naming == NAMING_DEEP:
