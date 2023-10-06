@@ -14,10 +14,11 @@ class ConsoleTabItem(QWidget):
         uic.loadUi(Path(__file__).parent.joinpath('ui').joinpath('console_item.ui'), self)
         self.str_command = str_command
         self.process = QProcess()
-        self.process.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
+        # self.process.setProcessEnvironment(QProcessEnvironment.systemEnvironment())
         self.process.readyReadStandardOutput.connect(self.on_stdout)
         self.process.readyReadStandardError.connect(self.on_stderr)
         self.process.finished.connect(self.on_finished)
+        # command = ['python']+command
         try:
             self.process.start(command[0], command[1:])
         except Exception as error:

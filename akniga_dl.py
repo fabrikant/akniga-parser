@@ -88,14 +88,14 @@ def find_mp3_url(book_soup):
 def get_chrome_driver():
     executable_path = ChromeDriverManager().install()
     options = webdriver.ChromeOptions()
-    # options.add_argument('headless')
+    options.add_argument('headless')
     service = chrome_service(executable_path=executable_path)
     return webdriver.Chrome(service=service, options=options)
 
 def get_firefox_driver():
     executable_path = GeckoDriverManager().install()
     options = webdriver.FirefoxOptions()
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--single-process")
     options.add_argument("--disable-dev-shm-usage")
