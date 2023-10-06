@@ -8,13 +8,18 @@ import requests
 import logging
 from pathlib import Path
 from pathvalidate import sanitize_filename
-from selenium.webdriver.chrome.service import Service as ChromeService
 from seleniumwire import webdriver
+
+from selenium.webdriver.chrome.service import Service as chrome_service
 from webdriver_manager.chrome import ChromeDriverManager
+
+from selenium.webdriver.firefox.service import Service as firefox_service
+from webdriver_manager.firefox import GeckoDriverManager
+
 from bs4 import BeautifulSoup
 import urllib.parse
 from Crypto.Cipher import AES
-import m3u8  # type:ignore
+import m3u8
 import tqdm
 
 NAMING_DEEP = 'deep'
@@ -22,6 +27,10 @@ NAMING_WIDE = 'wide'
 NAMING_ID = 'id'
 DOWNLOAD_REQUESTS = 'requests'
 DOWNLOAD_FFMPEG = 'ffmpeg'
+
+BROWSER_CHROME = 'chrome'
+BROWSER_FIREFOX = 'firefox'
+
 
 def request_heders():
     return {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 '
@@ -76,13 +85,32 @@ def find_mp3_url(book_soup):
             break
     return url_mp3
 
-
-def get_book_requests(book_url: str) -> list:
-    logger.warning("Getting book requests. Please wait...")
-    service = ChromeService(executable_path=ChromeDriverManager().install())
+def get_chrome_driver():
+    executable_path = ChromeDriverManager().install()
     options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    with webdriver.Chrome(service=service, options=options) as driver:
+    # options.add_argument('headless')
+    service = chrome_service(executable_path=executable_path)
+    return webdriver.Chrome(service=service, options=options)
+
+def get_firefox_driver():
+    executable_path = GeckoDriverManager().install()
+    options = webdriver.FirefoxOptions()
+    # options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--single-process")
+    options.add_argument("--disable-dev-shm-usage")
+    service = firefox_service(executable_path=executable_path)
+    return webdriver.Firefox(service=service, options=options)
+
+
+def get_book_requests(book_url, browser):
+    logger.warning("Getting book requests. Please wait...")
+    if browser == BROWSER_FIREFOX:
+        current_webdriver = get_firefox_driver()
+    else:
+        current_webdriver = get_chrome_driver()
+
+    with current_webdriver as driver:
         driver.get(book_url)
         book_requests = driver.requests
         html = driver.page_source
@@ -90,7 +118,7 @@ def get_book_requests(book_url: str) -> list:
         return book_requests, html
 
 
-def analyse_book_requests(book_requests: list) -> tuple:
+def analyse_book_requests(book_requests):
     logger.debug('Analysing book requests...')
     try:
         # find request with book json data
@@ -275,13 +303,14 @@ def create_work_dirs(output_folder, book_json, book_soup, book_url, naming):
     return book_folder, tmp_folder
 
 
-def download_book(book_url, output_folder, download_method=download_book_by_m3u8_with_requests, naming=NAMING_DEEP):
+def download_book(book_url, output_folder, download_method=download_book_by_m3u8_with_requests, naming=NAMING_DEEP,
+                  browser=BROWSER_CHROME):
 
     logger.debug(f'start downloading book: {book_url}')
     # create output folder
     Path(output_folder).mkdir(exist_ok=True)
 
-    book_requests, book_html = get_book_requests(book_url)
+    book_requests, book_html = get_book_requests(book_url, browser)
     book_json, m3u8_url = analyse_book_requests(book_requests)
     book_soup = BeautifulSoup(book_html, 'html.parser')
     book_folder, tmp_folder = create_work_dirs(output_folder, book_json, book_soup, book_url, naming)
@@ -307,7 +336,8 @@ def download_book(book_url, output_folder, download_method=download_book_by_m3u8
     return book_folder
 
 
-def parse_series(series_url, output_folder, download_method=download_book_by_m3u8_with_requests, naming=NAMING_DEEP):
+def parse_series(series_url, output_folder, download_method=download_book_by_m3u8_with_requests, naming=NAMING_DEEP,
+                 browser=BROWSER_CHROME):
     logger.warning('the series has been discovered')
     res = requests.get(series_url, headers=request_heders())
     if res.status_code == 200:
@@ -315,7 +345,7 @@ def parse_series(series_url, output_folder, download_method=download_book_by_m3u
         bs_links_soup = (series_soup.find('div', {'class':'content__main__articles'}).
                 findAll('a', {'class': 'content__article-main-link tap-link'}))
         for bs_link_soup in bs_links_soup:
-            download_book(bs_link_soup['href'], output_folder, download_method, naming)
+            download_book(bs_link_soup['href'], output_folder, download_method, naming, browser)
     else:
         logger.error(f'code: {res.status_code} while downloading: {series_url}')
 
@@ -325,10 +355,13 @@ if __name__ == '__main__':
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
     )
     parser = argparse.ArgumentParser(description='Загрузчик книг с сайта akniga.org')
-    parser.add_argument('-d','--download-method', default=DOWNLOAD_REQUESTS,
+    parser.add_argument('-d', '--download-method', default=DOWNLOAD_REQUESTS,
                         choices=[DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG],
                         help='Способ загрузки контента: с помощью отдельных запросов или ffmpeg')
-    parser.add_argument('-n','--naming', default=NAMING_DEEP, choices=[NAMING_DEEP, NAMING_WIDE, NAMING_ID],
+    parser.add_argument('-b', '--browser', default=BROWSER_CHROME,
+                        choices=[BROWSER_CHROME, BROWSER_FIREFOX],
+                        help=f'Использовать браузер. По умолчанию {BROWSER_CHROME}')
+    parser.add_argument('-n', '--naming', default=NAMING_DEEP, choices=[NAMING_DEEP, NAMING_WIDE, NAMING_ID],
                         help=f'Имена для выходных каталогов: [{NAMING_DEEP}] - путь Автор/Серия/Название; '
                              f'[{NAMING_WIDE}] - каталог Автор-Серия-Название; '
                              f'[{NAMING_ID}] - каталог с идентификатором из url')
@@ -340,6 +373,6 @@ if __name__ == '__main__':
     download_method = download_book_by_m3u8_with_ffmpeg if args.download_method == DOWNLOAD_FFMPEG \
         else download_book_by_m3u8_with_requests
     if '/series/' in args.url:
-        parse_series(args.url, args.output, download_method, args.naming)
+        parse_series(args.url, args.output, download_method, args.naming, args.browser)
     else:
-        download_book(args.url, args.output, download_method, args.naming)
+        download_book(args.url, args.output, download_method, args.naming, args.browser)

@@ -2,7 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QIntValidator
 from pathlib import Path
-from akniga_dl import NAMING_DEEP, NAMING_WIDE, NAMING_ID, DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG
+from akniga_dl import (NAMING_DEEP, NAMING_WIDE, NAMING_ID, DOWNLOAD_REQUESTS, DOWNLOAD_FFMPEG, BROWSER_FIREFOX,
+                       BROWSER_CHROME)
 from PyQt5.QtCore import QSettings
 
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, 'akniga', 'akniga_parser', None)
@@ -19,6 +20,9 @@ class SettingsDialog(QDialog):
         self.books_naming_method.addItem('Каталоги: Автор/Серия/Название', NAMING_DEEP)
         self.books_naming_method.addItem('Каталог: Автор-Серия-Название', NAMING_WIDE)
         self.books_naming_method.addItem('Каталог: Идентификатор из адреса страницы', NAMING_ID)
+
+        self.books_browser.addItem(BROWSER_CHROME, BROWSER_CHROME)
+        self.books_browser.addItem(BROWSER_FIREFOX, BROWSER_FIREFOX)
 
         self.page_start.setValidator(QIntValidator())
         self.page_stop.setValidator(QIntValidator())
@@ -44,6 +48,11 @@ class SettingsDialog(QDialog):
         if index > -1:
             self.books_naming_method.setCurrentIndex(index)
 
+        current_data = settings.value('DownloadBooks/browser', type=str, defaultValue=BROWSER_CHROME)
+        index = self.books_browser.findData(current_data)
+        if index > -1:
+            self.books_browser.setCurrentIndex(index)
+
         self.app_parser.setText(settings.value('Applications/parser', type=str))
         self.app_downloader.setText(settings.value('Applications/downloader', type=str))
 
@@ -59,6 +68,7 @@ class SettingsDialog(QDialog):
         settings.setValue('DownloadBooks/output', self.books_dir.text())
         settings.setValue('DownloadBooks/download-method', self.books_download_method.currentData())
         settings.setValue('DownloadBooks/naming', self.books_naming_method.currentData())
+        settings.setValue('DownloadBooks/browser', self.books_browser.currentData())
 
         settings.setValue('Applications/parser', self.app_parser.text())
         settings.setValue('Applications/downloader', self.app_downloader.text())
@@ -69,8 +79,10 @@ class SettingsDialog(QDialog):
 
     def on_app_parser_select(self):
         path, _ = QFileDialog.getOpenFileNames(self, caption='akniga_parser')
-        self.app_parser.setText(path[0])
+        if len(path):
+            self.app_parser.setText(path[0])
 
     def on_app_downloader_select(self):
         path, _ = QFileDialog.getOpenFileNames(self, caption='akniga_dl')
-        self.app_downloader.setText(path[0])
+        if len(path):
+            self.app_downloader.setText(path[0])

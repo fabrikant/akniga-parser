@@ -3,7 +3,7 @@ from table_model import BooksTableModel
 from PyQt5.QtGui import QIntValidator, QIcon
 from pathlib import Path
 import webbrowser
-from akniga_dl import NAMING_ID, DOWNLOAD_REQUESTS
+from akniga_dl import NAMING_ID, DOWNLOAD_REQUESTS, BROWSER_CHROME
 from akniga_settings import settings
 
 class TableBooks(QTableView):
@@ -62,7 +62,8 @@ class TableBooks(QTableView):
             return
         command = [script_path, '--download-method',
                    settings.value('DownloadBooks/download-method', type=str, defaultValue=DOWNLOAD_REQUESTS),
-                   '--naming', settings.value('DownloadBooks/naming', type=str, defaultValue=NAMING_ID)]
+                   '--naming', settings.value('DownloadBooks/naming', type=str, defaultValue=NAMING_ID),
+                   '--browser', settings.value('DownloadBooks/browser', type=str, defaultValue=BROWSER_CHROME)]
         output = settings.value('DownloadBooks/output', type=str)
         if output == '':
             output = '.'

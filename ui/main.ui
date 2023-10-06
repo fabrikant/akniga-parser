@@ -457,7 +457,7 @@
      <item row="0" column="0">
       <widget class="ConsoleTab" name="console_tab">
        <property name="tabPosition">
-        <enum>QTabWidget::South</enum>
+        <enum>QTabWidget::North</enum>
        </property>
        <property name="currentIndex">
         <number>-1</number>
