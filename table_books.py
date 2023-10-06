@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import *
 from table_model import BooksTableModel
-from PyQt5.QtGui import QIntValidator, QIcon
-from pathlib import Path
+from PyQt5.QtGui import QIntValidator
 import webbrowser
 from akniga_dl import NAMING_ID, DOWNLOAD_REQUESTS, BROWSER_CHROME
 from akniga_settings import settings
@@ -56,11 +55,8 @@ class TableBooks(QTableView):
         url = self.get_current_url()
         if not url:
             return
-        script_path = settings.value('Applications/downloader', type=str)
-        if script_path.strip() == '':
-            QMessageBox.warning('Не выбран загрузчик.')
-            return
-        command = [script_path, '--download-method',
+
+        command = ['akniga_dl.py', '--download-method',
                    settings.value('DownloadBooks/download-method', type=str, defaultValue=DOWNLOAD_REQUESTS),
                    '--naming', settings.value('DownloadBooks/naming', type=str, defaultValue=NAMING_ID),
                    '--browser', settings.value('DownloadBooks/browser', type=str, defaultValue=BROWSER_CHROME)]

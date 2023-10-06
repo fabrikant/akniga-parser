@@ -53,9 +53,6 @@ class SettingsDialog(QDialog):
         if index > -1:
             self.books_browser.setCurrentIndex(index)
 
-        self.app_parser.setText(settings.value('Applications/parser', type=str))
-        self.app_downloader.setText(settings.value('Applications/downloader', type=str))
-
 
     def write_settings(self):
         settings.setValue('connection_string', self.connection_string.text())
@@ -70,19 +67,7 @@ class SettingsDialog(QDialog):
         settings.setValue('DownloadBooks/naming', self.books_naming_method.currentData())
         settings.setValue('DownloadBooks/browser', self.books_browser.currentData())
 
-        settings.setValue('Applications/parser', self.app_parser.text())
-        settings.setValue('Applications/downloader', self.app_downloader.text())
 
     def on_books_dir_select(self):
         path = QFileDialog.getExistingDirectory(self, caption='Выбрать каталог')
         self.books_dir.setText(path)
-
-    def on_app_parser_select(self):
-        path, _ = QFileDialog.getOpenFileNames(self, caption='akniga_parser')
-        if len(path):
-            self.app_parser.setText(path[0])
-
-    def on_app_downloader_select(self):
-        path, _ = QFileDialog.getOpenFileNames(self, caption='akniga_dl')
-        if len(path):
-            self.app_downloader.setText(path[0])

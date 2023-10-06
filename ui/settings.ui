@@ -28,7 +28,48 @@
        <string>Обновление (загрузка) базы</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="6" column="0" colspan="3">
+       <item row="2" column="0" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Строка подключения:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="connection_string"/>
+         </item>
+        </layout>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="QCheckBox" name="update">
+         <property name="text">
+          <string>Обновлять свежими данными существующие объекты (замедляет при полном сканировании и большой базе)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0" colspan="2">
+        <widget class="QCheckBox" name="full_scan">
+         <property name="text">
+          <string>Полностью просканировать сайт (иначе остановиться, как только следующая книга найдется в базе)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="0" colspan="3">
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0">
           <widget class="QLabel" name="label_4">
@@ -60,68 +101,6 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="2">
-        <widget class="QPushButton" name="app_parser_select">
-         <property name="text">
-          <string>Выбрать</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>img/touch_app.png</normaloff>img/touch_app.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Парсер (akniga_parser)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="app_parser"/>
-       </item>
-       <item row="3" column="0" colspan="3">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Строка подключения:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="connection_string"/>
-         </item>
-        </layout>
-       </item>
-       <item row="13" column="1">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="11" column="0" colspan="2">
-        <widget class="QCheckBox" name="full_scan">
-         <property name="text">
-          <string>Полностью просканировать сайт (иначе остановиться, как только следующая книга найдется в базе)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0" colspan="2">
-        <widget class="QCheckBox" name="update">
-         <property name="text">
-          <string>Обновлять свежими данными существующие объекты (замедляет при полном сканировании и большой базе)</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -129,7 +108,51 @@
        <string>Загрузка книг</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="5" column="2">
+       <item row="3" column="2">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Браузер</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Имена каталогов:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLineEdit" name="books_dir"/>
+       </item>
+       <item row="3" column="4">
+        <widget class="QComboBox" name="books_browser"/>
+       </item>
+       <item row="2" column="4">
+        <widget class="QComboBox" name="books_naming_method"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_1">
+         <property name="text">
+          <string>Каталог загрузки:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QComboBox" name="books_download_method"/>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="books_dir_select">
+         <property name="text">
+          <string>Выбрать</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>img/folder_open_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/folder_open_FILL0_wght400_GRAD0_opsz24.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -142,75 +165,10 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="2">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Имена каталогов:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="4">
-        <widget class="QComboBox" name="books_naming_method"/>
-       </item>
-       <item row="4" column="2">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Браузер</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="4">
-        <widget class="QComboBox" name="books_browser"/>
-       </item>
        <item row="1" column="2">
-        <widget class="QLabel" name="label_1">
-         <property name="text">
-          <string>Каталог загрузки:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="4">
-        <widget class="QComboBox" name="books_download_method"/>
-       </item>
-       <item row="2" column="2">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Способ загрузки:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="4">
-        <widget class="QLineEdit" name="books_dir"/>
-       </item>
-       <item row="1" column="5">
-        <widget class="QPushButton" name="books_dir_select">
-         <property name="text">
-          <string>Выбрать</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>img/folder_open_FILL0_wght400_GRAD0_opsz24.png</normaloff>img/folder_open_FILL0_wght400_GRAD0_opsz24.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QLineEdit" name="app_downloader"/>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Загрузчик книг (akniga_dl)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
-        <widget class="QPushButton" name="app_downloader_select">
-         <property name="text">
-          <string>Выбрать</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>img/touch_app.png</normaloff>img/touch_app.png</iconset>
          </property>
         </widget>
        </item>
@@ -305,43 +263,9 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>app_downloader_select</sender>
-   <signal>clicked()</signal>
-   <receiver>settings</receiver>
-   <slot>on_app_downloader_select()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>722</x>
-     <y>59</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>393</x>
-     <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>app_parser_select</sender>
-   <signal>clicked()</signal>
-   <receiver>settings</receiver>
-   <slot>on_app_parser_select()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>722</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>393</x>
-     <y>127</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>on_books_dir_select()</slot>
   <slot>write_settings()</slot>
-  <slot>on_app_parser_select()</slot>
-  <slot>on_app_downloader_select()</slot>
  </slots>
 </ui>

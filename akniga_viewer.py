@@ -81,14 +81,10 @@ class MainWindow(QMainWindow):
             self.write_settings()
 
     def on_db_update(self):
-        script_path = settings.value('Applications/parser', type=str)
         if not self.connection_string:
             QMessageBox.warning(self, 'Ошибка!', 'Не выбрана база данных!', )
             return
-        if script_path.strip() == '':
-            QMessageBox.warning(self, 'Ошибка!', 'Не выбран парсер!', )
-            return
-        command = [script_path, '-db', self.connection_string]
+        command = ['akniga_parser.py', '-db', self.connection_string]
 
         start = settings.value('DatabaseUpdate/start-page', type=int, defaultValue=0)
         stop = settings.value('DatabaseUpdate/stop-page', type=int, defaultValue=0)
