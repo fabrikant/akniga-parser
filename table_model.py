@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5.Qt import QAbstractTableModel
 from PyQt5.QtCore import Qt, QVariant
 
@@ -54,7 +56,7 @@ class BooksTableModel(QAbstractTableModel):
         def get_key(row):
             val = row[col]
             if val is None:
-                val = 0
+                val = ''
             return val
         self.db_books_list.sort(reverse=not order, key=get_key)
         self.layoutChanged.emit()
