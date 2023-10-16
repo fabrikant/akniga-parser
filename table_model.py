@@ -11,6 +11,13 @@ class BooksTableModel(QAbstractTableModel):
         self.db_books = db_books
         self.db_books_list = self.db_books.all()
         self.visible_columns = len(self.db_books.column_descriptions) - hidden_columns
+        self.default_sort_values = {}
+        for col in range(self.visible_columns):
+            if 'VARCHAR' in str(self.db_books.column_descriptions[col]['type']):
+                self.default_sort_values[col] = ''
+            else:
+                self.default_sort_values[col] = 0
+
         self.sort(0, True)
 
         # pagination
@@ -19,6 +26,7 @@ class BooksTableModel(QAbstractTableModel):
         self.pages_count = self.records_count // self.records_on_page + 1 \
             if self.records_count % self.records_on_page else 0
         self.page_number = 1 if self.records_count else 0
+
 
     def rowCount(self, parent):
         if self.page_number < self.pages_count:
@@ -56,7 +64,7 @@ class BooksTableModel(QAbstractTableModel):
         def get_key(row):
             val = row[col]
             if val is None:
-                val = ''
+                val = self.default_sort_values[col]
             return val
         self.db_books_list.sort(reverse=not order, key=get_key)
         self.layoutChanged.emit()
