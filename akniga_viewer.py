@@ -6,6 +6,7 @@ from PyQt5 import uic, QtGui
 from PyQt5.Qt import QStandardItemModel, QStandardItem
 import akniga_sql as sql
 from akniga_settings import SettingsDialog, settings
+from akniga_download_starter import DownloadByURLDialog
 import logging
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,10 @@ class MainWindow(QMainWindow):
         self.table_books.addAction(self.copy_url)
         self.table_books.addAction(self.download_book)
         self.table_books.start_process_slot = self.on_request_to_start_process
+
+    def on_start_download_by_url(self):
+        dlg = DownloadByURLDialog(self.on_request_to_start_process)
+        dlg.exec()
 
     def closeEvent(self, event):
         self.write_settings()

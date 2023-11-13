@@ -183,6 +183,7 @@
     </property>
     <addaction name="filter_doc_action"/>
     <addaction name="console_doc_action"/>
+    <addaction name="strart_download_by_URL"/>
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
@@ -628,6 +629,15 @@
    </property>
    <property name="toolTip">
     <string>Скачать книгу</string>
+   </property>
+  </action>
+  <action name="strart_download_by_URL">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/download.png</normaloff>img/download.png</iconset>
+   </property>
+   <property name="text">
+    <string>Скачать по URL...</string>
    </property>
   </action>
  </widget>
@@ -1199,6 +1209,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>strart_download_by_URL</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_start_download_by_url()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>653</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>on_db_connect()</slot>
@@ -1220,5 +1246,6 @@
   <slot>on_db_create()</slot>
   <slot>on_settings()</slot>
   <slot>on_console_tab_current_widget(int)</slot>
+  <slot>on_start_download_by_url()</slot>
  </slots>
 </ui>
