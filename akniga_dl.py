@@ -288,10 +288,10 @@ def create_work_dirs(output_folder, book_json, book_soup, book_url, naming):
                 if len(book_json['series_name']) > 0:
                     if naming == NAMING_DEEP:
                         book_folder = (Path(output_folder) / book_json['author'] / book_json['series_name'] /
-                                       book_json['titleonly'])
+                                       f"{book_json['series_number']} {book_json['titleonly']}")
                     else:
                         book_folder = Path(output_folder) / (f'{book_json["author"]} - {book_json["series_name"]} '
-                                                             f'- {book_json["titleonly"]}')
+                                                             f'- {book_json["series_number"]} {book_json["titleonly"]}')
 
     # create new folder with book title
     Path(book_folder).mkdir(exist_ok=True, parents=True)
