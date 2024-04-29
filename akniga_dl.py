@@ -33,8 +33,8 @@ BROWSER_FIREFOX = 'firefox'
 
 
 def request_heders():
-    return {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 '
-                         'Safari/537.36'}
+    return {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 '
+                          'Safari/537.36'}
 
 logger = logging.getLogger(__name__)
 
@@ -56,21 +56,29 @@ def get_cover_filename(dir_path):
     return dir_path / 'cover.jpg'
 
 
-def download_cover(book_json, tmp_folder):
+def download_cover(book_json, book_soup, tmp_folder):
     cover_url = book_json['preview']
     cover_filename = get_cover_filename(tmp_folder)
-    big_picture_url = cover_url.replace("100x100crop", "400x")
+    cover_tmp_filename = tmp_folder / 'cover_tmp.jpg'
+    big_picture_url = book_soup.find('link', {'rel': 'preload', 'as': 'image'})['href']
     # try to download big picture
     res = requests.get(big_picture_url, stream=True, headers=request_heders())
     if res.status_code == 200:
-        with open(cover_filename, 'wb') as f:
+        res.raw.decode_content = True
+        with open(cover_tmp_filename, 'wb') as f:
             shutil.copyfileobj(res.raw, f)
+
     else:
         # big picture not found, try to download preview
         res = requests.get(cover_url, stream=True, headers=request_heders())
         if res.status_code == 200:
-            with open(cover_filename, 'wb') as f:
+            res.raw.decode_content = True
+            with open(cover_tmp_filename, 'wb') as f:
                 shutil.copyfileobj(res.raw, f)
+
+    command = ffmpeg_common_command() + ['-i', cover_tmp_filename, cover_filename]
+    subprocess.run(command)
+    os.remove(cover_tmp_filename)
     return cover_filename
 
 
@@ -316,7 +324,7 @@ def download_book(book_url, output_folder, download_method=download_book_by_m3u8
     book_folder, tmp_folder = create_work_dirs(output_folder, book_json, book_soup, book_url, naming)
 
     # download cover picture
-    download_cover(book_json, tmp_folder)
+    download_cover(book_json, book_soup, tmp_folder)
 
     if m3u8_url is None: # playlist not found.
         # try to parse html
