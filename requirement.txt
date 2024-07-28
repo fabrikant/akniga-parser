@@ -11,3 +11,4 @@ superqt
 tqdm
 pycryptodome
 m3u8
+blinker==1.7.0
