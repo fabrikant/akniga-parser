@@ -22,6 +22,9 @@ from Crypto.Cipher import AES
 import m3u8
 import tqdm
 
+import gzip
+import time
+
 NAMING_DEEP = 'deep'
 NAMING_WIDE = 'wide'
 NAMING_ID = 'id'
@@ -119,7 +122,9 @@ def get_book_requests(book_url, browser):
         current_webdriver = get_chrome_driver()
 
     with current_webdriver as driver:
+        driver.implicitly_wait(40)
         driver.get(book_url)
+        time.sleep(30)
         book_requests = driver.requests
         html = driver.page_source
         driver.close()
@@ -134,7 +139,9 @@ def analyse_book_requests(book_requests):
         # assert that we have only 1 request for book data found
         assert len(book_json_requests) == 1, 'Error: Book data not found. Exiting.'
         logger.warning('Book data found')
-        book_json = json.loads(brotli.decompress(book_json_requests[0].response.body))
+               
+        # book_json = json.loads(brotli.decompress(book_json_requests[0].response.body))
+        book_json = json.loads(gzip.decompress(book_json_requests[0].response.body).decode('utf-8'))
         # find request with m3u8 file
         m3u8_file_requests = [r for r in book_requests if 'm3u8' in r.url]
         m3u8url = None
